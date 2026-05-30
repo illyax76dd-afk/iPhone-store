@@ -292,6 +292,7 @@ main { padding-bottom: 80px; }
 }
 .format-card .actions { display: flex; gap: 10px; flex-wrap: wrap; }
 .format-card .visual {
+  z-index: -1;
   position: absolute;
   inset: auto -18px -18px auto;
   width: 52%;
