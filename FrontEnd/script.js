@@ -459,24 +459,47 @@ function closeModal() {
 }
 
 function updateModalFromState() {
-  const variants = getModelVariants(modalState.product.model);
-  const match = variants.find(p =>
-    p.storage === modalState.selectedStorage &&
-    p.color   === modalState.selectedColor
-  ) || variants.find(p => p.storage === modalState.selectedStorage) || variants[0];
-  if (match) {
-    document.getElementById('modalPrice').textContent = price(match.price);
+    const baseModel = modalState.product;
+    let dynamicPrice = baseModel.price;
+
+    // Націнки за пам'ять (відносно базової)
+    const storagePrices = {
+        '64 GB': 0,
+        '128 GB': 2000,
+        '256 GB': 5000,
+        '512 GB': 10000,
+        '1 TB': 18000,
+        '2 TB': 25000
+    };
+
+    // Націнки за версію SIM
+    const simPrices = {
+        'eSIM': 0,
+        'SIM + eSIM': 1500, // Фізична сімка зазвичай дорожча на ринку
+        'Dual SIM': 2500
+    };
+
+    // Розраховуємо різницю між обраною пам'яттю/SIM та базовою
+    const baseStoragePrice = storagePrices[baseModel.storage] || 0;
+    const selectedStoragePrice = storagePrices[modalState.selectedStorage] || 0;
+
+    const baseSimPrice = simPrices[baseModel.sim] || 0;
+    const selectedSimPrice = simPrices[modalState.selectedSim] || 0;
+
+    dynamicPrice += (selectedStoragePrice - baseStoragePrice);
+    dynamicPrice += (selectedSimPrice - baseSimPrice);
+
+    document.getElementById('modalPrice').textContent = price(dynamicPrice);
     document.getElementById('modalSubtitle').textContent =
-      `${match.storage} · ${match.color} · ${match.year} рік`;
-    modalState.product = match;
-  }
-  // Refresh active states
-  document.querySelectorAll('#simOptions .modal-opt').forEach(b =>
-    b.classList.toggle('active', b.dataset.sim === modalState.selectedSim));
-  document.querySelectorAll('#colorOptions .modal-opt').forEach(b =>
-    b.classList.toggle('active', b.dataset.color === modalState.selectedColor));
-  document.querySelectorAll('#storageOptions .modal-opt').forEach(b =>
-    b.classList.toggle('active', b.dataset.storage === modalState.selectedStorage));
+        `${modalState.selectedStorage} · ${modalState.selectedColor} · ${baseModel.year} рік`;
+
+    // Оновлюємо активні кнопки
+    document.querySelectorAll('#simOptions .modal-opt').forEach(b =>
+        b.classList.toggle('active', b.dataset.sim === modalState.selectedSim));
+    document.querySelectorAll('#colorOptions .modal-opt').forEach(b =>
+        b.classList.toggle('active', b.dataset.color === modalState.selectedColor));
+    document.querySelectorAll('#storageOptions .modal-opt').forEach(b =>
+        b.classList.toggle('active', b.dataset.storage === modalState.selectedStorage));
 }
 
 function bindModal() {
