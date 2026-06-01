@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Каталог iPhone — iFranko</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="index.html" aria-label="iFranko">
+      <span class="brand-mark"></span>
+      <strong>iFranko</strong><span>.</span>
+    </a>
+    <nav class="nav">
+      <a data-nav href="catalog.html" class="active">Каталог</a>
+      <a data-nav href="catalog.html?status=new" class="">Нові iPhone</a>
+      <a data-nav href="catalog.html?status=used" class="">Вживані (Б/У)</a>
+      <a class="cta" href="trade-in.html">Оцінити Trade-In</a>
+    </nav>
+  </div>
+</header>
+
+  <main>
+    <section class="catalog-top">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="kicker">Каталог iPhone</div>
+            <h2>Оберіть модель і стан</h2>
+            <p class="sub">Фільтр “Стан” працює на сайті та відкриває каталог з потрібним набором товарів ще з головної сторінки.</p>
+          </div>
+        </div>
+
+        <div class="catalog-toolbar">
+          <input id="search" class="searchbox" type="search" placeholder="Пошук: iPhone 15, 128 GB, Black..." />
+          <div class="toolbar-right">
+            <button class="chip active" type="button" data-condition="all">Усі</button>
+            <button class="chip" type="button" data-condition="Новий">Новий</button>
+            <button class="chip" type="button" data-condition="Вживаний (Б/У)">Вживаний (Б/У)</button>
+          </div>
+        </div>
+
+        <div class="catalog-layout">
+          <aside class="filters">
+            <div class="panel">
+              <div class="filter-group">
+                <h3>Модель</h3>
+                  <div class="option-list">
+                      <button class="chip active" type="button" data-model="all">Усі моделі</button>
+                    <div class="option-list">
+                      <button class="chip active" type="button" data-model="all">Усі моделі</button>
+                      <button class="chip" type="button" data-model="iPhone 17 Pro Max">iPhone 17 Pro Max</button>
+                      <button class="chip" type="button" data-model="iPhone 17 Pro">iPhone 17 Pro</button>
+                      <button class="chip" type="button" data-model="iPhone 17 Air">iPhone 17 Air</button>
+                      <button class="chip" type="button" data-model="iPhone 17">iPhone 17</button>
+                      <button class="chip" type="button" data-model="iPhone 17e">iPhone 17e</button>
+
+                      <button class="chip" type="button" data-model="iPhone 16 Pro Max">iPhone 16 Pro Max</button>
+                      <button class="chip" type="button" data-model="iPhone 16 Pro">iPhone 16 Pro</button>
+                      <button class="chip" type="button" data-model="iPhone 16 Plus">iPhone 16 Plus</button>
+                      <button class="chip" type="button" data-model="iPhone 16">iPhone 16</button>
+
+                      <button class="chip" type="button" data-model="iPhone 15 Pro Max">iPhone 15 Pro Max</button>
+                      <button class="chip" type="button" data-model="iPhone 15 Pro">iPhone 15 Pro</button>
+                      <button class="chip" type="button" data-model="iPhone 15 Plus">iPhone 15 Plus</button>
+                      <button class="chip" type="button" data-model="iPhone 15">iPhone 15</button>
+                    </div>
+
+                      <button class="chip" type="button" data-model="iPhone SE 2022">iPhone SE</button>
+                  </div>
+              </div>
+
+              <div class="filter-group">
+                <h3>Порада</h3>
+                <p class="sub">Почни з кнопки “Нові iPhone” або “Вживані (Б/У)” на головній — каталог відкриється вже з потрібним фільтром.</p>
+              </div>
+
+              <div class="filter-group">
+                <button class="btn secondary" type="button" data-reset>Скинути фільтри</button>
+              </div>
+            </div>
+          </aside>
+
+          <section>
+            <div class="stats">
+              <strong><span data-count>0</span> товарів</strong>
+              <span data-summary>Всі товари</span>
+            </div>
+            <div class="products-grid" data-products></div>
+            <div class="empty panel" data-empty style="display:none;">
+              За обраними фільтрами нічого не знайдено.
+              <div><button class="btn primary" type="button" data-reset>Скинути фільтри</button></div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div>Каталог тільки з iPhone.</div>
+      <div><a href="index.html">Головна</a> · <a href="trade-in.html">Trade-In</a></div>
+    </div>
+  </footer>
+  <!-- ── PRODUCT MODAL ───────────────────────────────────────── -->
+  <div class="modal-overlay" id="productModal" role="dialog" aria-modal="true">
+    <div class="modal-box">
+      <!-- Photo column -->
+      <div class="modal-photo-col" id="modalPhotoCol">
+        <span class="modal-photo-badge" id="modalBadge"></span>
+        <div class="modal-glow" id="modalGlow"></div>
+        <img class="modal-phone-img" id="modalImg" src="" alt="" />
+      </div>
+      <!-- Info column -->
+      <div class="modal-info-col" style="position:relative;">
+        <button class="modal-close" id="modalClose" aria-label="Закрити">✕</button>
+
+        <div class="modal-title-row">
+          <h2 id="modalTitle"></h2>
+        </div>
+        <p class="modal-subtitle" id="modalSubtitle"></p>
+        <div class="modal-price-row" id="modalPrice"></div>
+
+        <!-- SIM selector -->
+        <div class="modal-selector" id="simSelector">
+          <div class="modal-selector-label">Версія SIM</div>
+          <div class="modal-options" id="simOptions"></div>
+        </div>
+
+        <!-- Color selector -->
+        <div class="modal-selector">
+          <div class="modal-selector-label">Колір</div>
+          <div class="modal-options" id="colorOptions"></div>
+        </div>
+
+        <!-- Storage selector -->
+        <div class="modal-selector">
+          <div class="modal-selector-label">Пам'ять</div>
+          <div class="modal-options" id="storageOptions"></div>
+        </div>
+
+        <!-- Description -->
+        <div class="modal-desc" id="modalDesc"></div>
+
+        <!-- Main actions -->
+        <div class="modal-actions">
+          <button class="btn primary" id="modalBuyBtn">Купити</button>
+          <button class="btn secondary" id="modalSpecsBtn">Характеристики</button>
+          <button class="btn secondary" id="modalReviewsBtn">Відгуки / Питання</button>
+        </div>
+
+        <!-- Buy mini-form -->
+        <div class="modal-buy-form" id="modalBuyForm">
+          <h4>Швидке замовлення</h4>
+          <p>Введіть номер і ми передзвонимо для оформлення</p>
+          <input class="modal-field" id="modalPhone" type="tel" placeholder="+380 __ ___ __ __" />
+          <input class="modal-field" id="modalName" type="text" placeholder="Ваше ім'я (необов'язково)" />
+          <button class="btn primary" id="modalSubmitBtn" style="width:100%">Чекаю дзвінка</button>
+          <div class="modal-buy-success" id="modalSuccess">✓ Дякуємо! Ми зв'яжемось з вами найближчим часом.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DETAILS SECTION (specs + reviews) ─────────────────── -->
+  <section class="product-details-section details-anchor" id="detailsSection">
+    <div class="container">
+      <div class="panel" style="padding:28px;">
+        <div class="details-tabs">
+          <button class="details-tab active" data-dtab="specs">Характеристики</button>
+          <button class="details-tab" data-dtab="reviews">Відгуки</button>
+          <button class="details-tab" data-dtab="qa">Питання</button>
+        </div>
+        <!-- Specs panel -->
+        <div id="dtabSpecs">
+          <table class="specs-table" id="specsTable"></table>
+        </div>
+        <!-- Reviews panel -->
+        <div id="dtabReviews" style="display:none">
+          <div id="reviewsList"></div>
+        </div>
+        <!-- Q&A panel -->
+        <div id="dtabQa" style="display:none">
+          <div id="qaList"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
