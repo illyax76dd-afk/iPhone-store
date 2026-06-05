@@ -8,29 +8,6 @@
 // Використовуються в каталозі та Trade-In
 // -------------------------------------------------------------
 const MODEL_IMAGES = {
-<<<<<<< HEAD
-  "iPhone 17 Pro Max": "img/17promax.png",
-  "iPhone 17 Pro": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-17-pro.jpg",
-  "iPhone 17 Air": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-air.jpg",
-  "iPhone 17": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-17.jpg",
-  "iPhone 16 Pro Max": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro-max.jpg",
-  "iPhone 16 Pro": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-pro.jpg",
-  "iPhone 16 Plus": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16-plus.jpg",
-  "iPhone 16": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16.jpg",
-  "iPhone 15 Pro Max": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-15-pro-max.jpg",
-  "iPhone 15 Pro": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-15-pro.jpg",
-  "iPhone 15 Plus": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-15-plus-.jpg",
-  "iPhone 15": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-15.jpg",
-  "iPhone 14 Pro": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-14-pro.jpg",
-  "iPhone 14": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-14.jpg",
-  "iPhone 13 Pro": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-13-pro.jpg",
-  "iPhone 13": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-13.jpg",
-  "iPhone 12 Pro": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-12-pro.jpg",
-  "iPhone 12": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-12.jpg",
-  "iPhone 11": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-11.jpg",
-  "iPhone 17e": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-17e.jpg",
-  "iPhone SE 2022": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-se-2022-.jpg",
-=======
   "iPhone 17 Pro Max": "img/17-pro-max-cosmic-orange.jpg",
   "iPhone 17 Pro": "img/17-pro.jpg",
   "iPhone 17 Air": "img/17-air.jpg",
@@ -52,7 +29,6 @@ const MODEL_IMAGES = {
   "iPhone 11": "img/11.jpg",
   "iPhone 17e": "img/17e.jpg",
   "iPhone SE 2022": "img/se-2022.jpg",
->>>>>>> e0307ea7a01499b7c96b50bd4e82b70ef6b16db7
 };
 
 // -------------------------------------------------------------
