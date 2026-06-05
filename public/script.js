@@ -933,15 +933,44 @@ function bindModal() {
   });
 
   // Submit
-  document.getElementById('modalSubmitBtn').addEventListener('click', () => {
-    const phone = document.getElementById('modalPhone').value.trim();
-    if (!phone) {
-      document.getElementById('modalPhone').focus();
-      return;
+  document.getElementById('modalSubmitBtn').addEventListener('click', async () => {
+  const name = document.getElementById('modalName').value.trim();
+  const phone = document.getElementById('modalPhone').value.trim();
+
+  // 1. Перевірка ПІБ (поле обов'язкове і має містити мінімум 2 слова — Прізвище та Ім'я)
+  const nameWords = name.split(/\s+/).filter(Boolean);
+  if (nameWords.length < 2) {
+    alert("Будь ласка, введіть ваше повне ПІБ (наприклад: Іванов Іван)!");
+    return;
+  }
+
+  // 2. Перевірка формату телефону (+380 і рівно 9 цифр після нього, всього 12 символів)
+  const phoneRegex = /^\+380\d{9}$/;
+  if (!phoneRegex.test(phone)) {
+    alert("Введіть правильний номер телефону!\nЗразок: +380931234567 (усього 9 цифр після +380, без пробілів та дефісів)");
+    return;
+  }
+
+  // Якщо перевірка успішна — збираємо дані моделі та ціну
+  const model = `${modalState.product.model} (${modalState.selectedStorage}, ${modalState.selectedSim})`;
+  const price = document.getElementById('modalPrice').textContent;
+
+  try {
+    const response = await fetch('/api/order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, phone, model, price })
+    });
+
+    const data = await response.json();
+    if (data.success) {
+      document.getElementById('modalSuccess').style.display = 'block';
     }
-    document.getElementById('modalSuccess').classList.add('show');
-    document.getElementById('modalSubmitBtn').style.display = 'none';
-  });
+  } catch (error) {
+    console.error("Не вдалося надіслати замовлення на сервер:", error);
+    alert("Сталася помилка з'єднання з сервером.");
+  }
+});
 
   // Specs button — scroll to details
   document.getElementById('modalSpecsBtn').addEventListener('click', () => {
@@ -1041,3 +1070,4 @@ buildCatalog = function () {
   });
   bindModal();
 };
+
