@@ -18,7 +18,7 @@ const MODEL_IMAGES = {
   "iPhone 16": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-16.jpg",
   "iPhone 15 Pro Max": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-15-pro-max.jpg",
   "iPhone 15 Pro": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-15-pro.jpg",
-  "iPhone 15 Plus": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-15-plus.jpg",
+  "iPhone 15 Plus": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-15-plus-.jpg",
   "iPhone 15": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-15.jpg",
   "iPhone 14 Pro": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-14-pro.jpg",
   "iPhone 14": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-14.jpg",
@@ -27,6 +27,7 @@ const MODEL_IMAGES = {
   "iPhone 12 Pro": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-12-pro.jpg",
   "iPhone 12": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-12.jpg",
   "iPhone 11": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-11.jpg",
+  "iPhone 17e": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-17e.jpg",
   "iPhone SE 2022": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-se-2022-.jpg",
 };
 
@@ -102,6 +103,28 @@ const PRODUCTS = [
     sim: "eSIM",
     accent: "#7a9a7a"
   },
+  {
+    id: 30,
+    model: "iPhone 17e",
+    storage: "128 GB",
+    color: "Black",
+    price: 34999,
+    condition: "Новий",
+    year: 2025,
+    sim: "eSIM",
+    accent: "#1a1a1a"
+  },
+  {
+    id: 31,
+    model: "iPhone 17e",
+    storage: "256 GB",
+    color: "Teal",
+    price: 40999,
+    condition: "Новий",
+    year: 2025,
+    sim: "eSIM",
+    accent: "#14b8a6"
+  },
 
   // ── iPhone 16 серія (2024) ──────────────────────────────────
   {
@@ -137,6 +160,28 @@ const PRODUCTS = [
     sim: "eSIM",
     accent: "#8b5cf6"
   },
+  {
+    id: 32,
+    model: "iPhone 16 Plus",
+    storage: "128 GB",
+    color: "Black",
+    price: 42999,
+    condition: "Новий",
+    year: 2024,
+    sim: "eSIM",
+    accent: "#1a1a1a"
+  },
+  {
+    id: 33,
+    model: "iPhone 16 Plus",
+    storage: "256 GB",
+    color: "Ultramarine",
+    price: 48999,
+    condition: "Новий",
+    year: 2024,
+    sim: "eSIM",
+    accent: "#5a6aab"
+  },
 
   // ── iPhone 15 серія (2023) ──────────────────────────────────
   {
@@ -160,6 +205,28 @@ const PRODUCTS = [
     year: 2023,
     sim: "SIM + eSIM",
     accent: "#ec4899"
+  },
+  {
+    id: 34,
+    model: "iPhone 15 Plus",
+    storage: "128 GB",
+    color: "Yellow",
+    price: 32999,
+    condition: "Новий",
+    year: 2023,
+    sim: "SIM + eSIM",
+    accent: "#eab308"
+  },
+  {
+    id: 35,
+    model: "iPhone 15 Plus",
+    storage: "256 GB",
+    color: "Blue",
+    price: 37999,
+    condition: "Вживаний (Б/У)",
+    year: 2023,
+    sim: "SIM + eSIM",
+    accent: "#3b82f6"
   },
 
   // ── iPhone 14 серія (2022) ──────────────────────────────────
@@ -272,7 +339,7 @@ const PRODUCTS = [
 
 // Порядок сортування моделей у каталозі (від новіших до старших)
 const modelOrder = [
-  "iPhone 17 Pro Max", "iPhone 17 Pro", "iPhone 17 Air", "iPhone 17",
+  "iPhone 17 Pro Max", "iPhone 17 Pro", "iPhone 17 Air", "iPhone 17", "iPhone 17e",
   "iPhone 16 Pro Max", "iPhone 16 Pro", "iPhone 16 Plus", "iPhone 16",
   "iPhone 15 Pro Max", "iPhone 15 Pro", "iPhone 15 Plus", "iPhone 15",
   "iPhone 14 Pro", "iPhone 14",
@@ -429,9 +496,9 @@ function buildTradeInEstimator() {
   const hint = document.querySelector('[data-hint]');
 
   const baseValues = {
-    'iPhone 17 Pro Max': 48000, 'iPhone 17 Pro': 42000, 'iPhone 17 Air': 36000, 'iPhone 17': 32000,
-    'iPhone 16 Pro Max': 36000, 'iPhone 16 Pro': 32000, 'iPhone 16': 28000,
-    'iPhone 15 Pro Max': 30000, 'iPhone 15': 25000,
+    'iPhone 17 Pro Max': 48000, 'iPhone 17 Pro': 42000, 'iPhone 17 Air': 36000, 'iPhone 17': 32000, 'iPhone 17e': 25000,
+    'iPhone 16 Pro Max': 36000, 'iPhone 16 Pro': 32000, 'iPhone 16 Plus': 28500, 'iPhone 16': 26000,
+    'iPhone 15 Pro Max': 30000, 'iPhone 15 Plus': 22000, 'iPhone 15': 20000,
     'iPhone 14 Pro': 22000, 'iPhone 14': 18000,
     'iPhone 13 Pro': 17000, 'iPhone 13': 14000,
     'iPhone 12 Pro': 12000, 'iPhone 12': 10000,
@@ -492,6 +559,7 @@ const MODEL_COLORS = {
   'iPhone 17 Pro': ['Desert Titanium', 'Black Titanium', 'White Titanium', 'Natural Titanium', 'Cosmic Orange'],
   'iPhone 17 Air': ['Sky Blue', 'Starlight', 'Black', 'White', 'Pink'],
   'iPhone 17': ['Black', 'White', 'Pink', 'Teal', 'Blue', 'Yellow'],
+  'iPhone 17e': ['Black', 'White', 'Pink', 'Teal', 'Ultramarine'],
   'iPhone 16 Pro Max': ['Black Titanium', 'White Titanium', 'Natural Titanium', 'Desert Titanium'],
   'iPhone 16 Pro': ['Black Titanium', 'White Titanium', 'Natural Titanium', 'Desert Titanium'],
   'iPhone 16 Plus': ['Black', 'White', 'Pink', 'Teal', 'Ultramarine'],
@@ -516,6 +584,7 @@ const MODEL_STORAGES = {
   'iPhone 17 Pro': ['256 GB', '512 GB', '1 TB'],
   'iPhone 17 Air': ['128 GB', '256 GB', '512 GB'],
   'iPhone 17': ['128 GB', '256 GB', '512 GB'],
+  'iPhone 17e': ['128 GB', '256 GB'],
   'iPhone 16 Pro Max': ['256 GB', '512 GB', '1 TB'],
   'iPhone 16 Pro': ['128 GB', '256 GB', '512 GB', '1 TB'],
   'iPhone 16 Plus': ['128 GB', '256 GB', '512 GB'],
@@ -652,12 +721,14 @@ const MODEL_DESCRIPTIONS = {
   'iPhone 17 Pro': 'A26 Pro, потрійна камера 48 Мп, екран 6.3" ProMotion. Преміум у компактному форматі з ультратонкими рамками.',
   'iPhone 17 Air': 'Найтонший iPhone в історії — 5.5 мм. Чип A18, великий 6.6" дисплей, eSIM. Ідеально для тих, хто цінує легкість.',
   'iPhone 17': 'A18, Dynamic Island, камера 48 Мп. Найдоступніший спосіб отримати флагманські технології 2025 року.',
+  'iPhone 17e': 'A18, OLED 6.1", камера 48 Мп та підтримка Apple Intelligence за найдоступнішою ціною лінійки 17. Компактний і швидкий.',
   'iPhone 16 Pro Max': 'A18 Pro, камера 48 Мп з 5× зумом, екран 6.9" ProMotion. Найпотужніший iPhone лінійки 2024.',
   'iPhone 16 Pro': 'A18 Pro, 48 Мп, новий Action Button і Camera Control. Ідеальний баланс розміру та можливостей.',
   'iPhone 16 Plus': 'A18, великий 6.7" екран, тривала батарея. Відмінний вибір для тих, хто любить простір.',
   'iPhone 16': 'A18, Dynamic Island, камера 48 Мп. Перший iPhone з підтримкою Apple Intelligence.',
   'iPhone 15 Pro Max': 'Титановий корпус, A17 Pro, оптичний зум 5×. Флагман 2023 — зараз за вигідною ціною.',
   'iPhone 15 Pro': 'A17 Pro, 48 Мп, Action Button. Преміальні технології у зручному форматі.',
+  'iPhone 15 Plus': 'A16 Bionic, великий 6.7" OLED, Dynamic Island і USB-C. Більше екрану — більше задоволення за розумні гроші.',
   'iPhone 15': 'Dynamic Island, USB-C, A16 Bionic. Сучасний дизайн за доступною ціною.',
   'iPhone 14 Pro': 'Always-On дисплей, Dynamic Island, A16 Bionic. Перевірений час флагман — чудовий вибір б/у.',
   'iPhone 14': 'A15 Bionic, акселерометр при ДТП, Emergency SOS. Надійний вибір на кожен день.',
@@ -675,10 +746,14 @@ const MODEL_SPECS = {
   'iPhone 17 Pro': [['Чип', 'A26 Pro'], ['Дисплей', '6.3" OLED ProMotion 120 Гц'], ['Камера', '48 Мп + 48 Мп + 12 Мп'], ['Батарея', 'До 33 год відео'], ['Корпус', 'Титан'], ['Захист', 'IP68'], ['SIM', 'eSIM'], ['OS', 'iOS 26']],
   'iPhone 17 Air': [['Чип', 'A18'], ['Дисплей', '6.6" OLED 60 Гц'], ['Камера', '48 Мп основна'], ['Товщина', '5.5 мм'], ['Батарея', 'До 26 год відео'], ['Захист', 'IP68'], ['SIM', 'eSIM'], ['OS', 'iOS 26']],
   'iPhone 17': [['Чип', 'A18'], ['Дисплей', '6.1" OLED 60 Гц'], ['Камера', '48 Мп основна'], ['Батарея', 'До 22 год відео'], ['Захист', 'IP68'], ['SIM', 'eSIM'], ['OS', 'iOS 26']],
+  'iPhone 17e': [['Чип', 'A18'], ['Дисплей', '6.1" OLED 60 Гц'], ['Камера', '48 Мп основна'], ['Батарея', 'До 20 год відео'], ['Захист', 'IP68'], ['SIM', 'eSIM'], ['OS', 'iOS 26']],
   'iPhone 16 Pro Max': [['Чип', 'A18 Pro'], ['Дисплей', '6.9" OLED ProMotion 120 Гц'], ['Камера', '48 Мп + 48 Мп + 12 Мп'], ['Зум', '5× оптичний'], ['Батарея', 'До 33 год відео'], ['Захист', 'IP68'], ['SIM', 'eSIM'], ['OS', 'iOS 26']],
   'iPhone 16 Pro': [['Чип', 'A18 Pro'], ['Дисплей', '6.3" OLED ProMotion 120 Гц'], ['Камера', '48 Мп + 48 Мп + 12 Мп'], ['Батарея', 'До 27 год відео'], ['Захист', 'IP68'], ['SIM', 'eSIM'], ['OS', 'iOS 26']],
+  'iPhone 16 Plus': [['Чип', 'A18'], ['Дисплей', '6.7" OLED 60 Гц'], ['Камера', '48 Мп + 12 Мп'], ['Батарея', 'До 27 год відео'], ['Захист', 'IP68'], ['SIM', 'eSIM'], ['OS', 'iOS 26']],
   'iPhone 16': [['Чип', 'A18'], ['Дисплей', '6.1" OLED 60 Гц'], ['Камера', '48 Мп + 12 Мп'], ['Батарея', 'До 22 год відео'], ['Захист', 'IP68'], ['SIM', 'eSIM'], ['OS', 'iOS 26']],
   'iPhone 15 Pro Max': [['Чип', 'A17 Pro'], ['Дисплей', '6.7" OLED ProMotion 120 Гц'], ['Камера', '48 Мп + 12 Мп + 12 Мп'], ['Зум', '5× оптичний'], ['Корпус', 'Титан'], ['Батарея', 'До 29 год відео'], ['Захист', 'IP68'], ['SIM', 'SIM + eSIM'], ['OS', 'iOS 26']],
+  'iPhone 15 Pro': [['Чип', 'A17 Pro'], ['Дисплей', '6.1" OLED ProMotion 120 Гц'], ['Камера', '48 Мп + 12 Мп + 12 Мп'], ['Корпус', 'Титан'], ['Батарея', 'До 23 год відео'], ['Захист', 'IP68'], ['SIM', 'SIM + eSIM'], ['OS', 'iOS 26']],
+  'iPhone 15 Plus': [['Чип', 'A16 Bionic'], ['Дисплей', '6.7" OLED 60 Гц'], ['Камера', '48 Мп + 12 Мп'], ['Батарея', 'До 26 год відео'], ['Захист', 'IP68'], ['SIM', 'SIM + eSIM'], ['OS', 'iOS 26']],
   'iPhone 15': [['Чип', 'A16 Bionic'], ['Дисплей', '6.1" OLED 60 Гц'], ['Камера', '48 Мп + 12 Мп'], ['Батарея', 'До 20 год відео'], ['Захист', 'IP68'], ['SIM', 'SIM + eSIM'], ['OS', 'iOS 26']],
   'iPhone 14 Pro': [['Чип', 'A16 Bionic'], ['Дисплей', '6.1" OLED ProMotion 120 Гц'], ['Камера', '48 Мп + 12 Мп + 12 Мп'], ['Always-On', 'Так'], ['Батарея', 'До 23 год відео'], ['Захист', 'IP68'], ['SIM', 'SIM + eSIM'], ['OS', 'iOS 18']],
   'iPhone 14': [['Чип', 'A15 Bionic'], ['Дисплей', '6.1" OLED 60 Гц'], ['Камера', '12 Мп + 12 Мп'], ['Батарея', 'До 20 год відео'], ['Захист', 'IP68'], ['SIM', 'SIM + eSIM'], ['OS', 'iOS 18']],
