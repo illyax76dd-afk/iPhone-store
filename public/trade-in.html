@@ -132,17 +132,20 @@
     .st-label { font-size:1rem; color:var(--muted); }
     .st-val   { font-size:2.2rem; font-weight:900; letter-spacing:-.06em; }
 
-    /* ── Модальне вікно (Повністю по центру і широкі поля) ── */
-    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); backdrop-filter:blur(8px); z-index:100; align-items:center; justify-content:center; }
+/* ── Модальне вікно (Вирівнювання по центру і броня від 16px) ── */
+    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); backdrop-filter:blur(8px); z-index:1000; align-items:center; justify-content:center; }
     .modal-overlay.open { display:flex; }
-    .modal-box { background:var(--panel); border:1px solid var(--border); border-radius:28px; padding:36px; max-width:500px; width:calc(100% - 32px); position:relative; text-align:center; box-sizing:border-box; }
-    .modal-box h3 { margin:0 0 8px; font-size:1.6rem; letter-spacing:-.04em; text-align:center; }
-    .modal-box p  { color:var(--muted); font-size:.95rem; margin:0 0 24px; text-align:center; }
+    .modal-box { background:var(--panel); border:1px solid var(--border); border-radius:28px; padding:36px; max-width:480px; width:calc(100% - 32px); position:relative; text-align:center; box-sizing:border-box; margin: auto; }
+    .modal-box h3 { margin:0 0 8px; font-size:1.5rem; letter-spacing:-.04em; text-align:center; }
+    .modal-box p  { color:var(--muted); font-size:.92rem; margin:0 0 20px; text-align:center; }
     .modal-close  { position:absolute; top:18px; right:18px; width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,.06); border:1px solid var(--border); cursor:pointer; font-size:1.1rem; display:grid; place-items:center; color:var(--muted); }
-    .modal-inputs { display:grid; gap:14px; width:100%; }
-    .modal-inputs input { background:rgba(255,255,255,.04); border:1px solid var(--border); color:var(--text); border-radius:14px; height:54px !important; min-height:54px !important; padding:0 18px; font-size:1rem; width:100% !important; outline:none; font-family:inherit; box-sizing:border-box; transition:border-color .15s; text-align:left; }
-    .modal-inputs input:focus { border-color:var(--accent); background:rgba(255,255,255,.07); }
-    .modal-inputs input::placeholder { color:#7d7d86; }
+    .modal-inputs { display:flex; flex-direction:column; gap:12px; width:100%; align-items: center; }
+    
+    /* Броня від бага з 16px */
+    .modal-inputs input.form-field { background:rgba(255,255,255,.04) !important; border:1px solid var(--border) !important; color:var(--text) !important; border-radius:14px !important; min-height:52px !important; height:52px !important; padding:0 16px !important; font-size:1rem !important; width:100% !important; max-width: 100% !important; outline:none !important; font-family:inherit !important; box-sizing:border-box !important; transition:border-color .15s !important; text-align:left !important; display: block !important; }
+    .modal-inputs input.form-field:focus { border-color:var(--accent) !important; }
+    .modal-inputs input.form-field::placeholder { color:#7d7d86; }
+    
     .modal-success { text-align:center; display:none; padding:20px 0 10px; }
     .modal-success .ms-icon { font-size:3rem; margin-bottom:14px; }
     .modal-success h3 { margin:0 0 8px; font-size:1.4rem; }
@@ -324,10 +327,10 @@
       <h3>Заявка на обмін</h3>
       <p>Введіть контактні дані — ми зв'яжемось для підтвердження</p>
       <div class="modal-inputs">
-        <input type="text" id="inp-name" placeholder="Ваше ПІБ (напр. Іванов Іван) *" required />
-        <input type="tel" id="inp-phone" placeholder="Номер телефону (+380_________) *" required />
+        <input type="text" id="inp-name" class="form-field" placeholder="Ваше ПІБ (напр. Іванов Іван) *" required />
+        <input type="tel" id="inp-phone" class="form-field" placeholder="Номер телефону (+380_________) *" required />
       </div>
-      <button class="btn primary" id="submit-btn" style="width:100%;margin-top:16px">Відправити заявку</button>
+      <button class="btn primary" id="submit-btn" style="width:100%;margin-top:16px;height:52px;">Відправити заявку</button>
     </div>
     <div class="modal-success" id="modal-success">
       <div class="ms-icon">✅</div>
@@ -753,11 +756,11 @@
     // 2. Перевірка формату телефону (+380 і 9 цифр)
     const phoneRegex = /^\+380\d{9}$/;
     if (!phoneRegex.test(phone)) {
-      alert("Введіть правильний номер телефону!\nЗразок: +380931234567 (9 цифр після +380 без пробілів та дефісів)");
+      alert("Введіть правильний номер телефону!\nЗразок: +380931234567 (9 цифр після +380 без пробілів)");
       return;
     }
 
-    // Витягуємо дані з калькулятора вашого сайту
+    // Витягуємо дані з калькулятора
     var giveModel = state.give.model + " " + state.give.storage + " (" + state.give.condition + ")";
     var getModel  = state.get.model + " " + state.get.storage + " (" + state.get.condition + ")";
     var topup     = document.getElementById('sum-topup').textContent;
