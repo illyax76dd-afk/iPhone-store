@@ -8,7 +8,7 @@
 // Використовуються в каталозі та Trade-In
 // -------------------------------------------------------------
 const MODEL_IMAGES = {
-  "iPhone 17 Pro Max": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-17-pro-max.jpg",
+  "iPhone 17 Pro Max": "img/17promax.png",
   "iPhone 17 Pro": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-17-pro.jpg",
   "iPhone 17 Air": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-air.jpg",
   "iPhone 17": "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-17.jpg",
