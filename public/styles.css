@@ -1029,3 +1029,134 @@ main { padding-bottom: 80px; }
     object-fit: contain;
     aspect-ratio: 3 / 4;
 }
+
+/* ==========================================
+   ОНОВЛЕННЯ ДЛЯ МОДАЛЬНОГО ВІКНА iFranko
+   ========================================== */
+
+/* 1. Обмежуємо висоту модального вікна під розмір екрану */
+.modal-box {
+  max-height: 88vh !important; /* Вікно ніколи не вийде за межі екрану */
+  display: flex !important;
+  flex-direction: row !important;
+  overflow: hidden !important; /* Ховаємо все, що виходить за рамки */
+  position: relative;
+}
+
+/* 2. Зменшуємо колонку та розмір фото */
+.modal-photo-col {
+  flex: 0 0 38% !important; /* Зменшуємо займану ширину фото з 50% до 38% */
+  max-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px !important;
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.modal-phone-img {
+  max-width: 90% !important;
+  max-height: 250px !important; /* Жорстко обмежуємо висоту картинки */
+  object-fit: contain !important;
+}
+
+/* 3. Безпечний скрол для інформаційної колонки */
+.modal-info-col {
+  flex: 0 0 62% !important;
+  max-height: 100%;
+  overflow-y: auto; /* Якщо параметрів або кнопок буде забагато — з'явиться зручний внутрішній скрол */
+  padding: 30px !important;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 4. Трансформація форми замовлення у бічну панель */
+.modal-buy-form {
+  position: absolute !important;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  background: #121214 !important; /* Колір вашої панелі var(--panel), щоб перекрити опції */
+  padding: 40px 30px;
+  box-sizing: border-box;
+  z-index: 99;
+  border-left: 1px solid var(--border);
+  
+  /* Ефект виїзду справа наліво */
+  display: none;
+  transform: translateX(100%);
+  opacity: 0;
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+}
+
+/* Спрацьовує автоматично, коли ваш JS робить формі display: block або flex */
+.modal-buy-form[style*="display: block"],
+.modal-buy-form[style*="display: flex"],
+.modal-buy-form.active {
+  display: flex !important;
+  flex-direction: column;
+  justify-content: center;
+  transform: translateX(0) !important;
+  opacity: 1 !important;
+}
+
+/* ========================================================
+   ОНОВЛЕНИЙ КАТАЛОГ iFranko: КРАСИВА ТА ШИРОКА МОДАЛКА
+   ======================================================== */
+
+/* Робимо загальне вікно значно ширшим, щоб фото не тиснулося */
+.modal-box {
+  width: 95% !important;
+  max-width: 1050px !important; /* Збільшено ширину для балансу фото та опцій */
+  height: auto !important;
+  max-height: 90vh !important; /* Щоб не вилазило за рамки екрану ноутбуків */
+  display: flex !important;
+  flex-direction: row !important;
+  border-radius: var(--radius-xl) !important;
+  background: var(--panel) !important;
+  overflow: hidden !important;
+  box-shadow: var(--shadow) !important;
+}
+
+/* Колонці з фото даємо більше простору */
+.modal-photo-col {
+  flex: 0 0 45% !important; /* Фото тепер займає солідні 45% ширини вікна */
+  background: rgba(255, 255, 255, 0.01) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 40px !important;
+  border-right: 1px solid var(--border) !important;
+}
+
+/* Налаштування самого зображення iPhone */
+.modal-phone-img {
+  max-width: 100% !important;
+  max-height: 380px !important; /* Фото велике, чітке і не стиснуте */
+  object-fit: contain !important;
+}
+
+/* Інформаційна колонка (пам'ять, колір, кнопки) */
+.modal-info-col {
+  flex: 0 0 55% !important;
+  padding: 40px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow-y: auto !important; /* Якщо контенту буде забагато, з'явиться внутрішній скрол */
+}
+
+/* ── ГОЛОВНА МАГІЯ: Приховуємо все зайве під час оформлення заявки ── */
+.modal-info-col.buy-active .modal-subtitle,
+.modal-info-col.buy-active .modal-price-row,
+.modal-info-col.buy-active .modal-selector,
+.modal-info-col.buy-active .modal-desc,
+.modal-info-col.buy-active .modal-actions {
+  display: none !important; /* Повністю ховаємо нижні кнопки, селектори та опис! */
+}
+
+/* Стиль для самої форми швидкого замовлення */
+.modal-buy-form {
+  width: 100% !important;
+  margin-top: 15px !important;
+}

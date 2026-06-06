@@ -1078,3 +1078,41 @@ buildCatalog = function () {
   bindModal();
 };
 
+// Закриття форми замовлення та повернення до картки товару
+document.getElementById('modalBuyBackBtn')?.addEventListener('click', () => {
+  const buyForm = document.getElementById('modalBuyForm');
+  if (buyForm) {
+    buyForm.style.display = 'none';
+  }
+});
+
+// 1. Коли натискають кнопку "Купити" (відкриття форми)
+const modalBuyBtn = document.getElementById('modalBuyBtn');
+const modalBuyForm = document.getElementById('modalBuyForm');
+const modalInfoCol = document.querySelector('.modal-info-col');
+
+if (modalBuyBtn && modalBuyForm && modalInfoCol) {
+  modalBuyBtn.addEventListener('click', () => {
+    modalBuyForm.style.display = 'block';
+    modalInfoCol.classList.add('buy-active'); // Ховаємо нижні кнопки та селектори
+  });
+}
+
+// 2. Обробка нової кнопки "Повернутися до вибору" всередині форми
+const modalBackToProductBtn = document.getElementById('modalBackToProductBtn');
+if (modalBackToProductBtn && modalBuyForm && modalInfoCol) {
+  modalBackToProductBtn.addEventListener('click', () => {
+    modalBuyForm.style.display = 'none';
+    modalInfoCol.classList.remove('buy-active'); // Повертаємо нижні кнопки та селектори назад
+  });
+}
+
+// 3. ВАЖЛИВО: Знайдіть функцію, яка закриває В СЕ модальне вікно (на хрестик або клік поза вікном)
+// і додайте туди скидання класу, щоб наступний відкритий iPhone не запускався з прихованими кнопками:
+const modalClose = document.getElementById('modalClose');
+if (modalClose && modalBuyForm && modalInfoCol) {
+  modalClose.addEventListener('click', () => {
+    modalBuyForm.style.display = 'none';
+    modalInfoCol.classList.remove('buy-active'); // Скидаємо стан для наступних відкриттів
+  });
+}
