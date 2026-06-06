@@ -8,24 +8,31 @@
 // Використовуються в каталозі та Trade-In
 // -------------------------------------------------------------
 const MODEL_IMAGES = {
-  "iPhone 17 Pro Max": "img/17-pro-max-cosmic-orange.jpg",
+  // iPhone 17 серія
+  "iPhone 17 Pro Max": "img/17-pro-max.jpg",
   "iPhone 17 Pro": "img/17-pro.jpg",
   "iPhone 17 Air": "img/17-air.jpg",
   "iPhone 17": "img/17.jpg",
+  // iPhone 16 серія
   "iPhone 16 Pro Max": "img/16-pro-max.jpg",
   "iPhone 16 Pro": "img/16-pro.jpg",
   "iPhone 16 Plus": "img/16-plus.jpg",
   "iPhone 16": "img/16.jpg",
+  // iPhone 15 серія
   "iPhone 15 Pro Max": "img/15-pro-max.jpg",
   "iPhone 15 Pro": "img/15-pro.jpg",
   "iPhone 15 Plus": "img/15-plus.jpg",
   "iPhone 15": "img/15.jpg",
+  // iPhone 14 серія
   "iPhone 14 Pro": "img/14-pro.jpg",
   "iPhone 14": "img/14.jpg",
+  // iPhone 13 серія
   "iPhone 13 Pro": "img/13-pro.jpg",
   "iPhone 13": "img/13.jpg",
+  // iPhone 12 серія
   "iPhone 12 Pro": "img/12-pro.jpg",
   "iPhone 12": "img/12.jpg",
+  // інші моделі
   "iPhone 11": "img/11.jpg",
   "iPhone 17e": "img/17e.jpg",
   "iPhone SE 2022": "img/se-2022.jpg",
