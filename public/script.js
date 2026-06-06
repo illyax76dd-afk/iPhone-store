@@ -48,23 +48,23 @@ const PRODUCTS = [
     id: 17,
     model: "iPhone 17 Pro Max",
     storage: "1 TB",
-    color: "Desert Titanium",
+    color: "Orange", // Замінено на новий
     price: 91999,
     condition: "Новий",
     year: 2025,
     sim: "eSIM",
-    accent: "#c8956c"
+    accent: "#ff7900" // Бажано змінити і акцентний колір підсвітки
   },
   {
     id: 18,
     model: "iPhone 17 Pro Max",
     storage: "512 GB",
-    color: "Black Titanium",
+    color: "Dark Blue", // Замінено на новий
     price: 81999,
     condition: "Новий",
     year: 2025,
     sim: "eSIM",
-    accent: "#2c2c2e"
+    accent: "#172035"
   },
   {
     id: 26,
@@ -558,31 +558,34 @@ const COLOR_MAP = {
   'Purple': '#a855f7', 'Deep Purple': '#6d28a7', 'Cosmic Orange': '#c8702a', 'Sage': '#7a9a7a',
   'Yellow': '#eab308', 'Green': '#22c55e', 'Teal': '#14b8a6',
   'Gold': '#c9a84c', 'Graphite': '#4a4a4a',
+  'Orange': '#ff7900', // Додано реальний колір
+  'Dark Blue': '#172035', // Додано реальний колір
+  'Alpine Green': '#505f4e'
 };
 
-// All official colors per model
+// All official colors per model (Актуально на 06.06.2026)
 const MODEL_COLORS = {
-  'iPhone 17 Pro Max': ['Desert Titanium', 'Black Titanium', 'White Titanium', 'Natural Titanium', 'Cosmic Orange'],
-  'iPhone 17 Pro': ['Desert Titanium', 'Black Titanium', 'White Titanium', 'Natural Titanium', 'Cosmic Orange'],
-  'iPhone 17 Air': ['Sky Blue', 'Starlight', 'Black', 'White', 'Pink'],
+  'iPhone 17 Pro Max': ['Orange', 'White', 'Dark Blue'],
+  'iPhone 17 Pro': ['Orange', 'White', 'Dark Blue'],
+  'iPhone 17 Air': ['Black', 'White', 'Pink', 'Teal', 'Blue'],
   'iPhone 17': ['Black', 'White', 'Pink', 'Teal', 'Blue', 'Yellow'],
   'iPhone 17e': ['Black', 'White', 'Pink', 'Teal', 'Ultramarine'],
-  'iPhone 16 Pro Max': ['Black Titanium', 'White Titanium', 'Natural Titanium', 'Desert Titanium'],
-  'iPhone 16 Pro': ['Black Titanium', 'White Titanium', 'Natural Titanium', 'Desert Titanium'],
+  'iPhone 16 Pro Max': ['Titanium Black', 'White Titanium', 'Natural Titanium', 'Desert Titanium'],
+  'iPhone 16 Pro': ['Titanium Black', 'White Titanium', 'Natural Titanium', 'Desert Titanium'],
   'iPhone 16 Plus': ['Black', 'White', 'Pink', 'Teal', 'Ultramarine'],
   'iPhone 16': ['Black', 'White', 'Pink', 'Teal', 'Ultramarine'],
-  'iPhone 15 Pro Max': ['Black Titanium', 'White Titanium', 'Natural Titanium', 'Blue Titanium'],
-  'iPhone 15 Pro': ['Black Titanium', 'White Titanium', 'Natural Titanium', 'Blue Titanium'],
+  'iPhone 15 Pro Max': ['Titanium Black', 'White Titanium', 'Natural Titanium', 'Blue Titanium'],
+  'iPhone 15 Pro': ['Titanium Black', 'White Titanium', 'Natural Titanium', 'Blue Titanium'],
   'iPhone 15 Plus': ['Black', 'Pink', 'Yellow', 'Green', 'Blue'],
   'iPhone 15': ['Black', 'Pink', 'Yellow', 'Green', 'Blue'],
   'iPhone 14 Pro': ['Space Black', 'Silver', 'Gold', 'Deep Purple'],
-  'iPhone 14': ['Midnight', 'Starlight', 'Blue', 'Purple', 'Red', 'Yellow'],
-  'iPhone 13 Pro': ['Sierra Blue', 'Silver', 'Gold', 'Graphite'],
-  'iPhone 13': ['Midnight', 'Starlight', 'Blue', 'Pink', 'Green', 'Red'],
-  'iPhone 12 Pro': ['Pacific Blue', 'Silver', 'Gold', 'Graphite'],
-  'iPhone 12': ['Black', 'White', 'Blue', 'Green', 'Red', 'Purple', 'Yellow'],
-  'iPhone 11': ['Black', 'White', 'Purple', 'Yellow', 'Green', 'Red'],
-  'iPhone SE 2022': ['Midnight', 'Starlight', 'Red'],
+  'iPhone 14': ['Midnight', 'Starlight', 'Blue', 'Purple', 'Product Red', 'Yellow'],
+  'iPhone 13 Pro': ['Graphite', 'Silver', 'Gold', 'Sierra Blue', 'Alpine Green'],
+  'iPhone 13': ['Midnight', 'Starlight', 'Blue', 'Pink', 'Green', 'Product Red'],
+  'iPhone 12 Pro': ['Graphite', 'Silver', 'Gold', 'Pacific Blue'],
+  'iPhone 12': ['Black', 'White', 'Blue', 'Green', 'Product Red', 'Purple'],
+  'iPhone 11': ['Black', 'White', 'Purple', 'Yellow', 'Green', 'Product Red'],
+  'iPhone SE 2022': ['Midnight', 'Starlight', 'Product Red'],
 };
 
 // All available storage options per model
