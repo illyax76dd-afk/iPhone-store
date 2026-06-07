@@ -4,13 +4,13 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Запустити iFranko Server",
+            "name": "Запустити AppleX Server",
             "skipFiles": [
                 "<node_internals>/**"
             ],
             "program": "${workspaceFolder}/server.js",
             "serverReadyAction": {
-                "pattern": "Сервер iFranko працює на (http://localhost:\\d+)",
+                "pattern": "Сервер AppleX працює на (http://localhost:\\d+)",
                 "action": "openExternally"
             }
         }
