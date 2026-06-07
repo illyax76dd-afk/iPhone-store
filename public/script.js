@@ -1,5 +1,5 @@
 // =============================================================
-// iFranko — script.js
+// AppleX — script.js
 // Каталог iPhone, фільтри та Trade-In калькулятор
 // =============================================================
 
@@ -640,7 +640,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // =============================================================
-// PRODUCT MODAL — iFranko
+// PRODUCT MODAL — AppleX
 // =============================================================
 
 // Grouped products by model for selector options

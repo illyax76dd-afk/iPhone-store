@@ -73,5 +73,5 @@ app.post('/api/trade-in', (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`Сервер iFranko працює на http://localhost:${PORT}`);
+    console.log(`Сервер AppleX працює на http://localhost:${PORT}`);
 });
