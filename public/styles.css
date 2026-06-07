@@ -71,9 +71,13 @@ header.site-header {
   background: linear-gradient(135deg, var(--accent), #ff5d2e);
   box-shadow: 0 0 18px rgba(255,138,31,.5);
 }
-.brand span { font-size: 1.15rem; }
-.brand strong { font-size: 1.45rem; }
-
+.brand img {
+  width: 250px;
+  height: 60px;
+  object-fit: cover;
+  cursor: pointer;
+  border-radius: 20px;
+}
 .nav {
   display: flex;
   align-items: center;
