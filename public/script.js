@@ -386,58 +386,115 @@ function bindHeroButtons() {
 }
 
 // -------------------------------------------------------------
+// КАТАЛОГ — глобальний стан фільтрів
+// -------------------------------------------------------------
+const catalogState = {
+  status:   'all',
+  search:   '',
+  models:   [],
+  storages: [],
+  sims:     [],
+  years:    [],
+  priceMin: null,
+  priceMax: null,
+};
+
+function getFilteredProducts() {
+  return PRODUCTS
+    .filter(p => {
+      const byCondition = catalogState.status === 'all' || p.condition === catalogState.status;
+      const bySearch    = !catalogState.search ||
+          `${p.model} ${p.storage} ${p.color}`.toLowerCase().includes(catalogState.search.toLowerCase());
+      const byModel     = catalogState.models.length   === 0 || catalogState.models.includes(p.model);
+      const byStorage   = catalogState.storages.length === 0 || catalogState.storages.includes(p.storage);
+      const bySim       = catalogState.sims.length     === 0 || catalogState.sims.includes(p.sim);
+      const byYear      = catalogState.years.length    === 0 || catalogState.years.includes(String(p.year));
+      const byPriceMin  = catalogState.priceMin === null || p.price >= catalogState.priceMin;
+      const byPriceMax  = catalogState.priceMax === null || p.price <= catalogState.priceMax;
+      return byCondition && bySearch && byModel && byStorage && bySim && byYear && byPriceMin && byPriceMax;
+    })
+    .sort((a, b) => modelOrder.indexOf(a.model) - modelOrder.indexOf(b.model) || b.price - a.price);
+}
+
+// -------------------------------------------------------------
 // КАТАЛОГ — фільтри, пошук, рендер карток з реальними фото
 // -------------------------------------------------------------
 function buildCatalog() {
   const grid = document.querySelector('[data-products]');
   if (!grid) return;
 
-  const search = document.querySelector('#search');
-  const conditionBtns = [...document.querySelectorAll('[data-condition]')];
-  const modelBtns = [...document.querySelectorAll('[data-model]')];
-  const resetBtn = document.querySelector('[data-reset]');
-  const countEl = document.querySelector('[data-count]');
-  const summaryEl = document.querySelector('[data-summary]');
-  const emptyEl = document.querySelector('[data-empty]');
+  // ── Ініціалізуємо стан з URL-параметра ──
+  const urlStatus = qs('status') || 'all';
+  if (urlStatus === 'new')  catalogState.status = 'Новий';
+  else if (urlStatus === 'used') catalogState.status = 'Вживаний (Б/У)';
+  else catalogState.status = 'all';
 
-  const state = {
-    status: qs('status') || 'all',
-    search: '',
-    model: 'all'
-  };
-  if (state.status === 'new') state.status = 'Новий';
-  if (state.status === 'used') state.status = 'Вживаний (Б/У)';
+  const search       = document.querySelector('#search');
+  const conditionBtns= [...document.querySelectorAll('[data-condition]')];
+  const resetBtn     = document.querySelector('[data-reset]');
+  const countEl      = document.querySelector('[data-count]');
+  const summaryEl    = document.querySelector('[data-summary]');
+  const emptyEl      = document.querySelector('[data-empty]');
+
+  // ── Заповнюємо список серій з лічильниками ──
+  const modelCounts = PRODUCTS.reduce((acc, p) => {
+    acc[p.model] = (acc[p.model] || 0) + 1;
+    return acc;
+  }, {});
+  const modelListEl = document.getElementById('modelFilterList');
+  if (modelListEl) {
+    modelListEl.innerHTML = modelOrder
+      .filter(m => modelCounts[m])
+      .map(m => `
+        <label class="check-row">
+          <input type="checkbox" data-model-cb="${m}">
+          <span class="check-label">${m}</span>
+          <span class="check-count">${modelCounts[m]}</span>
+        </label>`)
+      .join('');
+  }
+
+  // ── Accordion toggle ──
+  document.querySelectorAll('[data-fg] .fg-header').forEach(btn => {
+    btn.addEventListener('click', () => btn.closest('[data-fg]').classList.toggle('fg-open'));
+  });
+
+  // ── Допоміжна: оновити лічильник активних фільтрів на заголовку ──
+  function updateBadge(id, count) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (count > 0) { el.textContent = count; el.style.display = ''; }
+    else el.style.display = 'none';
+  }
 
   function render() {
-    // Оновлюємо активні кнопки фільтрів
+    // Оновлюємо чіпи стану (тулбар)
     conditionBtns.forEach(btn => btn.classList.toggle('active',
-        btn.dataset.condition === state.status ||
-        (state.status === 'all' && btn.dataset.condition === 'all')));
-    modelBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.model === state.model));
+        btn.dataset.condition === catalogState.status ||
+        (catalogState.status === 'all' && btn.dataset.condition === 'all')));
 
-    // Фільтрація та сортування
-    const filtered = PRODUCTS
-        .filter(p => {
-          const byCondition = state.status === 'all' || p.condition === state.status;
-          const bySearch = !state.search ||
-              `${p.model} ${p.storage} ${p.color}`.toLowerCase().includes(state.search.toLowerCase());
-          const byModel = state.model === 'all' || p.model === state.model;
-          return byCondition && bySearch && byModel;
-        })
-        .sort((a, b) =>
-            modelOrder.indexOf(a.model) - modelOrder.indexOf(b.model) || b.price - a.price
-        );
+    const filtered = getFilteredProducts();
 
     countEl.textContent = filtered.length;
-    summaryEl.textContent = `${state.status === 'all' ? 'Всі товари' : state.status} · ${state.model === 'all' ? 'усі моделі' : state.model}`;
+    const condLabel = catalogState.status === 'all' ? 'Всі' : catalogState.status;
+    const activeCount = catalogState.models.length + catalogState.storages.length +
+        catalogState.sims.length + catalogState.years.length +
+        (catalogState.priceMin !== null || catalogState.priceMax !== null ? 1 : 0);
+    summaryEl.textContent = condLabel + (activeCount > 0 ? ` · ${activeCount} фільтр${activeCount > 4 ? 'ів' : activeCount > 1 ? 'и' : ''}` : '');
 
-    // Рендер карток — з реальним фото або градієнтом як fallback
+    // Значки кількості на заголовках
+    updateBadge('fgCountModel',   catalogState.models.length);
+    updateBadge('fgCountStorage', catalogState.storages.length);
+    updateBadge('fgCountSim',     catalogState.sims.length);
+    updateBadge('fgCountYear',    catalogState.years.length);
+
+    // Рендер карток
     grid.innerHTML = filtered.map(p => {
       const imgUrl = MODEL_IMAGES[p.model];
       const visual = imgUrl
           ? `<div class="product-visual product-visual--photo">
-             <img src="${imgUrl}" alt="${p.model}" loading="lazy" onerror="this.parentElement.classList.remove('product-visual--photo');this.remove()">
-           </div>`
+               <img src="${imgUrl}" alt="${p.model}" loading="lazy" onerror="this.parentElement.classList.remove('product-visual--photo');this.remove()">
+             </div>`
           : `<div class="product-visual" style="background:radial-gradient(circle at 50% 20%,rgba(255,255,255,.18),transparent 22%),linear-gradient(135deg,${p.accent},rgba(17,24,39,.55))"></div>`;
       return `
       <article class="product-card panel">
@@ -457,30 +514,74 @@ function buildCatalog() {
     emptyEl.style.display = filtered.length ? 'none' : 'block';
   }
 
-  search?.addEventListener('input', e => {
-    state.search = e.target.value.trim();
-    render();
-  });
+  // ── Пошук ──
+  search?.addEventListener('input', e => { catalogState.search = e.target.value.trim(); render(); });
 
+  // ── Стан (тулбар-чіпи) ──
   conditionBtns.forEach(btn => btn.addEventListener('click', () => {
-    state.status = btn.dataset.condition;
+    catalogState.status = btn.dataset.condition;
     const url = new URL(location.href);
-    if (state.status === 'all') url.searchParams.delete('status');
-    else url.searchParams.set('status', state.status === 'Новий' ? 'new' : 'used');
+    if (catalogState.status === 'all') url.searchParams.delete('status');
+    else url.searchParams.set('status', catalogState.status === 'Новий' ? 'new' : 'used');
     history.replaceState({}, '', url);
     render();
   }));
 
-  modelBtns.forEach(btn => btn.addEventListener('click', () => {
-    state.model = btn.dataset.model;
-    render();
-  }));
+  // ── Серія (checkboxes) ──
+  document.addEventListener('change', e => {
+    const cb = e.target;
+    if (cb.matches('[data-model-cb]')) {
+      const val = cb.dataset.modelCb;
+      if (cb.checked) catalogState.models.push(val);
+      else catalogState.models = catalogState.models.filter(m => m !== val);
+      render();
+    }
+    if (cb.matches('[data-storage-cb]')) {
+      const val = cb.dataset.storageCb;
+      if (cb.checked) catalogState.storages.push(val);
+      else catalogState.storages = catalogState.storages.filter(s => s !== val);
+      render();
+    }
+    if (cb.matches('[data-sim-cb]')) {
+      const val = cb.dataset.simCb;
+      if (cb.checked) catalogState.sims.push(val);
+      else catalogState.sims = catalogState.sims.filter(s => s !== val);
+      render();
+    }
+    if (cb.matches('[data-year-cb]')) {
+      const val = cb.dataset.yearCb;
+      if (cb.checked) catalogState.years.push(val);
+      else catalogState.years = catalogState.years.filter(y => y !== val);
+      render();
+    }
+  });
 
+  // ── Ціна ──
+  document.getElementById('priceApply')?.addEventListener('click', () => {
+    const minVal = document.getElementById('priceMin')?.value;
+    const maxVal = document.getElementById('priceMax')?.value;
+    catalogState.priceMin = minVal ? Number(minVal) : null;
+    catalogState.priceMax = maxVal ? Number(maxVal) : null;
+    render();
+  });
+
+  // ── Скинути ──
   resetBtn?.addEventListener('click', () => {
-    state.status = 'all';
-    state.search = '';
-    state.model = 'all';
-    search.value = '';
+    catalogState.status   = 'all';
+    catalogState.search   = '';
+    catalogState.models   = [];
+    catalogState.storages = [];
+    catalogState.sims     = [];
+    catalogState.years    = [];
+    catalogState.priceMin = null;
+    catalogState.priceMax = null;
+    if (search) search.value = '';
+    const priceMin = document.getElementById('priceMin');
+    const priceMax = document.getElementById('priceMax');
+    if (priceMin) priceMin.value = '';
+    if (priceMax) priceMax.value = '';
+    document.querySelectorAll('[data-model-cb],[data-storage-cb],[data-sim-cb],[data-year-cb]')
+        .forEach(cb => cb.checked = false);
     history.replaceState({}, '', location.pathname);
     render();
   });
@@ -1105,17 +1206,7 @@ buildCatalog = function () {
     if (!card) return;
     const idx = [...grid.querySelectorAll('.product-card')].indexOf(card);
     if (idx === -1) return;
-    const search = document.querySelector('#search')?.value.trim() || '';
-    const statusVal = document.querySelector('[data-condition].active')?.dataset.condition || 'all';
-    const modelVal = document.querySelector('[data-model].active')?.dataset.model || 'all';
-    const filtered = PRODUCTS
-        .filter(p => {
-          const byC = statusVal === 'all' || p.condition === statusVal;
-          const byS = !search || `${p.model} ${p.storage} ${p.color}`.toLowerCase().includes(search.toLowerCase());
-          const byM = modelVal === 'all' || p.model === modelVal;
-          return byC && byS && byM;
-        })
-        .sort((a, b) => modelOrder.indexOf(a.model) - modelOrder.indexOf(b.model) || b.price - a.price);
+    const filtered = getFilteredProducts();
     const product = filtered[idx];
     if (product) openModal(product);
   });

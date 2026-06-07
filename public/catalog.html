@@ -46,44 +46,101 @@
         <div class="catalog-layout">
           <aside class="filters">
             <div class="panel">
-              <div class="filter-group">
-                <h3>Модель</h3>
-                <div class="option-list">
-                  <button class="chip active" type="button" data-model="all">Усі моделі</button>
 
-                  <button class="chip" type="button" data-model="iPhone 17 Pro Max">iPhone 17 Pro Max</button>
-                  <button class="chip" type="button" data-model="iPhone 17 Pro">iPhone 17 Pro</button>
-                  <button class="chip" type="button" data-model="iPhone 17 Air">iPhone 17 Air</button>
-                  <button class="chip" type="button" data-model="iPhone 17">iPhone 17</button>
-                  <button class="chip" type="button" data-model="iPhone 17e">iPhone 17e</button>
-
-                  <button class="chip" type="button" data-model="iPhone 16 Pro Max">iPhone 16 Pro Max</button>
-                  <button class="chip" type="button" data-model="iPhone 16 Pro">iPhone 16 Pro</button>
-                  <button class="chip" type="button" data-model="iPhone 16 Plus">iPhone 16 Plus</button>
-                  <button class="chip" type="button" data-model="iPhone 16">iPhone 16</button>
-
-                  <button class="chip" type="button" data-model="iPhone 15 Pro Max">iPhone 15 Pro Max</button>
-                  <button class="chip" type="button" data-model="iPhone 15 Pro">iPhone 15 Pro</button>
-                  <button class="chip" type="button" data-model="iPhone 15 Plus">iPhone 15 Plus</button>
-                  <button class="chip" type="button" data-model="iPhone 15">iPhone 15</button>
-
-                  <button class="chip" type="button" data-model="iPhone 14 Pro">iPhone 14 Pro</button>
-                  <button class="chip" type="button" data-model="iPhone 14">iPhone 14</button>
-
-                  <button class="chip" type="button" data-model="iPhone 13 Pro">iPhone 13 Pro</button>
-                  <button class="chip" type="button" data-model="iPhone 13">iPhone 13</button>
-
-                  <button class="chip" type="button" data-model="iPhone 12 Pro">iPhone 12 Pro</button>
-                  <button class="chip" type="button" data-model="iPhone 12">iPhone 12</button>
-
-                  <button class="chip" type="button" data-model="iPhone 11">iPhone 11</button>
-                  <button class="chip" type="button" data-model="iPhone SE 2022">iPhone SE</button>
+              <!-- ── Серія ──────────────────────────── -->
+              <div class="fg fg-open" data-fg>
+                <button class="fg-header" type="button">
+                  <span class="fg-header-left">
+                    <span>Серія</span>
+                    <span class="fg-active-count" id="fgCountModel" style="display:none"></span>
+                  </span>
+                  <svg class="fg-chevron" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <div class="fg-body" id="modelFilterList">
+                  <!-- populated by JS with counts -->
                 </div>
               </div>
 
-              <div class="filter-group">
-                <button class="btn secondary" type="button" data-reset>Скинути фільтри</button>
+              <!-- ── Пам'ять ─────────────────────────── -->
+              <div class="fg fg-open" data-fg>
+                <button class="fg-header" type="button">
+                  <span class="fg-header-left">
+                    <span>Пам'ять</span>
+                    <span class="fg-active-count" id="fgCountStorage" style="display:none"></span>
+                  </span>
+                  <svg class="fg-chevron" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <div class="fg-body">
+                  <label class="check-row"><input type="checkbox" data-storage-cb="64 GB"><span class="check-label">64 GB</span></label>
+                  <label class="check-row"><input type="checkbox" data-storage-cb="128 GB"><span class="check-label">128 GB</span></label>
+                  <label class="check-row"><input type="checkbox" data-storage-cb="256 GB"><span class="check-label">256 GB</span></label>
+                  <label class="check-row"><input type="checkbox" data-storage-cb="512 GB"><span class="check-label">512 GB</span></label>
+                  <label class="check-row"><input type="checkbox" data-storage-cb="1 TB"><span class="check-label">1 TB</span></label>
+                  <label class="check-row"><input type="checkbox" data-storage-cb="2 TB"><span class="check-label">2 TB</span></label>
+                </div>
               </div>
+
+              <!-- ── Версія SIM ──────────────────────── -->
+              <div class="fg" data-fg>
+                <button class="fg-header" type="button">
+                  <span class="fg-header-left">
+                    <span>Версія SIM</span>
+                    <span class="fg-active-count" id="fgCountSim" style="display:none"></span>
+                  </span>
+                  <svg class="fg-chevron" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <div class="fg-body">
+                  <label class="check-row"><input type="checkbox" data-sim-cb="eSIM"><span class="check-label">eSIM</span></label>
+                  <label class="check-row"><input type="checkbox" data-sim-cb="SIM + eSIM"><span class="check-label">SIM + eSIM</span></label>
+                  <label class="check-row"><input type="checkbox" data-sim-cb="Dual SIM"><span class="check-label">Dual SIM</span></label>
+                </div>
+              </div>
+
+              <!-- ── Рік випуску ─────────────────────── -->
+              <div class="fg" data-fg>
+                <button class="fg-header" type="button">
+                  <span class="fg-header-left">
+                    <span>Рік випуску</span>
+                    <span class="fg-active-count" id="fgCountYear" style="display:none"></span>
+                  </span>
+                  <svg class="fg-chevron" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <div class="fg-body">
+                  <label class="check-row"><input type="checkbox" data-year-cb="2025"><span class="check-label">2025</span></label>
+                  <label class="check-row"><input type="checkbox" data-year-cb="2024"><span class="check-label">2024</span></label>
+                  <label class="check-row"><input type="checkbox" data-year-cb="2023"><span class="check-label">2023</span></label>
+                  <label class="check-row"><input type="checkbox" data-year-cb="2022"><span class="check-label">2022</span></label>
+                  <label class="check-row"><input type="checkbox" data-year-cb="2021"><span class="check-label">2021</span></label>
+                  <label class="check-row"><input type="checkbox" data-year-cb="2020"><span class="check-label">2020</span></label>
+                </div>
+              </div>
+
+              <!-- ── Ціна ───────────────────────────── -->
+              <div class="fg fg-open" data-fg>
+                <button class="fg-header" type="button">
+                  <span class="fg-header-left"><span>Ціна, ₴</span></span>
+                  <svg class="fg-chevron" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <div class="fg-body">
+                  <div class="price-range-inputs">
+                    <div class="price-field">
+                      <span class="price-field-label">від</span>
+                      <input class="price-input" type="number" id="priceMin" placeholder="напр. 15 000" min="0" step="500">
+                    </div>
+                    <div class="price-field">
+                      <span class="price-field-label">до</span>
+                      <input class="price-input" type="number" id="priceMax" placeholder="напр. 90 000" min="0" step="500">
+                    </div>
+                  </div>
+                  <button class="btn secondary price-apply-btn" type="button" id="priceApply">Застосувати</button>
+                </div>
+              </div>
+
+              <!-- ── Скинути ─────────────────────────── -->
+              <div class="filters-footer">
+                <button class="btn secondary" type="button" data-reset>↺ Скинути фільтри</button>
+              </div>
+
             </div>
           </aside>
 
