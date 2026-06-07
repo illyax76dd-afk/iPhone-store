@@ -48,23 +48,23 @@ const PRODUCTS = [
     id: 17,
     model: "iPhone 17 Pro Max",
     storage: "1 TB",
-    color: "Orange", // Замінено на новий
+    color: "Silver",
     price: 91999,
     condition: "Новий",
     year: 2025,
     sim: "eSIM",
-    accent: "#ff7900" // Бажано змінити і акцентний колір підсвітки
+    accent: "#c4c4ce"
   },
   {
     id: 18,
     model: "iPhone 17 Pro Max",
     storage: "512 GB",
-    color: "Dark Blue", // Замінено на новий
+    color: "Deep Blue",
     price: 81999,
     condition: "Новий",
     year: 2025,
     sim: "eSIM",
-    accent: "#172035"
+    accent: "#0d2d52"
   },
   {
     id: 26,
@@ -80,7 +80,7 @@ const PRODUCTS = [
   {
     id: 20,
     model: "iPhone 17 Air",
-    storage: "128 GB",
+    storage: "256 GB",
     color: "Sky Blue",
     price: 51999,
     condition: "Новий",
@@ -125,12 +125,12 @@ const PRODUCTS = [
     id: 31,
     model: "iPhone 17e",
     storage: "256 GB",
-    color: "Teal",
+    color: "Soft Pink",
     price: 40999,
     condition: "Новий",
     year: 2025,
     sim: "eSIM",
-    accent: "#14b8a6"
+    accent: "#e8a8a8"
   },
 
   // ── iPhone 16 серія (2024) ──────────────────────────────────
@@ -138,12 +138,12 @@ const PRODUCTS = [
     id: 1,
     model: "iPhone 16 Pro Max",
     storage: "256 GB",
-    color: "Titanium Black",
+    color: "Black Titanium",
     price: 56999,
     condition: "Новий",
     year: 2024,
     sim: "eSIM",
-    accent: "#ff8a1f"
+    accent: "#3a3a3c"
   },
   {
     id: 2,
@@ -549,43 +549,84 @@ function getModelVariants(baseModel) {
 
 // Color name → CSS color
 const COLOR_MAP = {
-  'Black': '#1a1a1a', 'Midnight': '#1c2030', 'Space Black': '#2c2c2e',
-  'Titanium Black': '#3a3a3c', 'Desert Titanium': '#c8956c', 'Natural Titanium': '#b8a898',
-  'White': '#f5f5f7', 'White Titanium': '#ece9e4', 'Starlight': '#d4d0c8', 'Silver': '#e0e0e2',
-  'Pink': '#f4a9c0', 'Product Red': '#d32f2f', 'Red': '#ef4444',
-  'Blue': '#3b82f6', 'Ultramarine': '#8b5cf6', 'Pacific Blue': '#0ea5e9',
-  'Sierra Blue': '#7eb8d4', 'Sky Blue': '#7ab8d4', 'Deep Blue': '#1e3a5f', 'Blue Titanium': '#5b8db8',
-  'Purple': '#a855f7', 'Deep Purple': '#6d28a7', 'Cosmic Orange': '#c8702a', 'Sage': '#7a9a7a',
-  'Yellow': '#eab308', 'Green': '#22c55e', 'Teal': '#14b8a6',
+  // Neutrals / Classics
+  'Black': '#1a1a1a', 'Midnight': '#1c2030', 'Space Black': '#1c1c1e',
+  'Black Titanium': '#3a3a3c', 'Natural Titanium': '#b8a898',
+  'White': '#f5f5f7', 'White Titanium': '#ece9e4', 'Starlight': '#d4d0c8',
+  'Cloud White': '#f0ede8',
+
+  // Silver / Gold
+  'Silver': '#c4c4ce',           // iPhone 17 Pro — алюмінієве срібло
+  'Desert Titanium': '#c8956c',
+  'Light Gold': '#c9a87c',       // iPhone 17 Air
   'Gold': '#c9a84c', 'Graphite': '#4a4a4a',
-  'Orange': '#ff7900', // Додано реальний колір
-  'Dark Blue': '#172035', // Додано реальний колір
-  'Alpine Green': '#505f4e'
+
+  // Blues
+  'Deep Blue': '#0d2d52',        // iPhone 17 Pro — дуже темно-синій
+  'Blue': '#3b82f6', 'Ultramarine': '#4a5bab', 'Pacific Blue': '#0ea5e9',
+  'Sierra Blue': '#7eb8d4', 'Sky Blue': '#7ab8d4', 'Blue Titanium': '#5b8db8',
+  'Mist Blue': '#7faec2',        // iPhone 17
+
+  // Reds / Pinks
+  'Pink': '#f4a9c0', 'Product Red': '#d32f2f', 'Red': '#ef4444',
+  'Soft Pink': '#eaacac',        // iPhone 17e
+
+  // Purples
+  'Lavender': '#b8a9c9',         // iPhone 17
+  'Purple': '#a855f7', 'Deep Purple': '#6d28a7',
+
+  // Greens / Teals
+  'Sage': '#7a9a7a',             // iPhone 17
+  'Green': '#22c55e', 'Teal': '#14b8a6',
+
+  // Oranges / Yellows
+  'Cosmic Orange': '#d4682a',    // iPhone 17 Pro / Pro Max — насичений оранж
+  'Yellow': '#eab308',
 };
 
-// All official colors per model (Актуально на 06.06.2026)
+// All official colors per model
+// ── iPhone 17 серія (2025–2026) — ТІЛЬКИ реальні офіційні кольори ──
 const MODEL_COLORS = {
-  'iPhone 17 Pro Max': ['Orange', 'White', 'Dark Blue'],
-  'iPhone 17 Pro': ['Orange', 'White', 'Dark Blue'],
-  'iPhone 17 Air': ['Black', 'White', 'Pink', 'Teal', 'Blue'],
-  'iPhone 17': ['Black', 'White', 'Pink', 'Teal', 'Blue', 'Yellow'],
-  'iPhone 17e': ['Black', 'White', 'Pink', 'Teal', 'Ultramarine'],
-  'iPhone 16 Pro Max': ['Titanium Black', 'White Titanium', 'Natural Titanium', 'Desert Titanium'],
-  'iPhone 16 Pro': ['Titanium Black', 'White Titanium', 'Natural Titanium', 'Desert Titanium'],
-  'iPhone 16 Plus': ['Black', 'White', 'Pink', 'Teal', 'Ultramarine'],
-  'iPhone 16': ['Black', 'White', 'Pink', 'Teal', 'Ultramarine'],
-  'iPhone 15 Pro Max': ['Titanium Black', 'White Titanium', 'Natural Titanium', 'Blue Titanium'],
-  'iPhone 15 Pro': ['Titanium Black', 'White Titanium', 'Natural Titanium', 'Blue Titanium'],
-  'iPhone 15 Plus': ['Black', 'Pink', 'Yellow', 'Green', 'Blue'],
-  'iPhone 15': ['Black', 'Pink', 'Yellow', 'Green', 'Blue'],
+  // 3 кольори: Cosmic Orange, Deep Blue, Silver (алюмінієвий корпус)
+  'iPhone 17 Pro Max': ['Cosmic Orange', 'Deep Blue', 'Silver'],
+  'iPhone 17 Pro':     ['Cosmic Orange', 'Deep Blue', 'Silver'],
+
+  // 4 кольори: Sky Blue, Light Gold, Cloud White, Space Black
+  'iPhone 17 Air': ['Sky Blue', 'Light Gold', 'Cloud White', 'Space Black'],
+
+  // 5 кольорів: Black, White, Lavender, Mist Blue, Sage
+  'iPhone 17': ['Black', 'White', 'Lavender', 'Mist Blue', 'Sage'],
+
+  // 3 кольори: Black, White, Soft Pink
+  'iPhone 17e': ['Black', 'White', 'Soft Pink'],
+
+  // ── iPhone 16 серія (2024) ──
+  'iPhone 16 Pro Max': ['Black Titanium', 'White Titanium', 'Natural Titanium', 'Desert Titanium'],
+  'iPhone 16 Pro':     ['Black Titanium', 'White Titanium', 'Natural Titanium', 'Desert Titanium'],
+  'iPhone 16 Plus':    ['Black', 'White', 'Pink', 'Teal', 'Ultramarine'],
+  'iPhone 16':         ['Black', 'White', 'Pink', 'Teal', 'Ultramarine'],
+
+  // ── iPhone 15 серія (2023) ──
+  'iPhone 15 Pro Max': ['Black Titanium', 'White Titanium', 'Natural Titanium', 'Blue Titanium'],
+  'iPhone 15 Pro':     ['Black Titanium', 'White Titanium', 'Natural Titanium', 'Blue Titanium'],
+  'iPhone 15 Plus':    ['Black', 'Pink', 'Yellow', 'Green', 'Blue'],
+  'iPhone 15':         ['Black', 'Pink', 'Yellow', 'Green', 'Blue'],
+
+  // ── iPhone 14 серія (2022) ──
   'iPhone 14 Pro': ['Space Black', 'Silver', 'Gold', 'Deep Purple'],
-  'iPhone 14': ['Midnight', 'Starlight', 'Blue', 'Purple', 'Product Red', 'Yellow'],
-  'iPhone 13 Pro': ['Graphite', 'Silver', 'Gold', 'Sierra Blue', 'Alpine Green'],
-  'iPhone 13': ['Midnight', 'Starlight', 'Blue', 'Pink', 'Green', 'Product Red'],
-  'iPhone 12 Pro': ['Graphite', 'Silver', 'Gold', 'Pacific Blue'],
-  'iPhone 12': ['Black', 'White', 'Blue', 'Green', 'Product Red', 'Purple'],
-  'iPhone 11': ['Black', 'White', 'Purple', 'Yellow', 'Green', 'Product Red'],
-  'iPhone SE 2022': ['Midnight', 'Starlight', 'Product Red'],
+  'iPhone 14':     ['Midnight', 'Starlight', 'Blue', 'Purple', 'Red', 'Yellow'],
+
+  // ── iPhone 13 серія (2021) ──
+  'iPhone 13 Pro': ['Sierra Blue', 'Silver', 'Gold', 'Graphite'],
+  'iPhone 13':     ['Midnight', 'Starlight', 'Blue', 'Pink', 'Green', 'Red'],
+
+  // ── iPhone 12 серія (2020) ──
+  'iPhone 12 Pro': ['Pacific Blue', 'Silver', 'Gold', 'Graphite'],
+  'iPhone 12':     ['Black', 'White', 'Blue', 'Green', 'Red', 'Purple', 'Yellow'],
+
+  // ── Старші моделі ──
+  'iPhone 11':    ['Black', 'White', 'Purple', 'Yellow', 'Green', 'Red'],
+  'iPhone SE 2022': ['Midnight', 'Starlight', 'Red'],
 };
 
 // All available storage options per model
