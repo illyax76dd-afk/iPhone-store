@@ -872,25 +872,33 @@ main { padding-bottom: 80px; }
   opacity: 1;
   pointer-events: all;
 }
-.modal-box { 
-  display: block !important; /* Вбиваємо 2 колонки з styles.css */
-  background: var(--panel); 
-  border: 1px solid var(--border); 
-  border-radius: 28px; 
-  padding: 32px; 
-  max-width: 480px; 
-  width: calc(100% - 32px); 
-  position: relative; 
-  margin: auto; 
+/* Картка модального вікна товару (каталог). Trade-In має власний
+   локальний .modal-box у своєму <style> — цей блок його не стосується. */
+.modal-box {
+  display: flex;
+  flex-direction: row;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 32px;
+  width: 95%;
+  max-width: 1050px;
+  height: auto;
+  max-height: 90vh;
+  overflow: hidden;
+  position: relative;
+  margin: auto;
   box-sizing: border-box;
+  box-shadow: var(--shadow);
 }
-#modal-form-content { text-align: center; }
 .modal-overlay.open .modal-box {
   transform: scale(1) translateY(0);
 }
 .modal-photo-col {
-  padding: 28px;
-  background: #0d0d0f;
+  flex: 0 0 45%;
+  padding: 40px;
+  background: rgba(255,255,255,.01);
+  border-right: 1px solid var(--border);
   border-radius: 32px 0 0 32px;
   display: flex;
   flex-direction: column;
@@ -898,6 +906,7 @@ main { padding-bottom: 80px; }
   justify-content: center;
   position: relative;
   min-height: 480px;
+  max-height: 100%;
 }
 .modal-photo-badge {
   position: absolute;
@@ -914,6 +923,8 @@ main { padding-bottom: 80px; }
 .modal-phone-img {
   width: 220px;
   height: 280px;
+  max-width: 100%;
+  max-height: 380px;
   object-fit: contain;
   filter: drop-shadow(0 20px 40px rgba(0,0,0,.5));
   transition: transform .4s cubic-bezier(.34,1.56,.64,1);
@@ -932,10 +943,14 @@ main { padding-bottom: 80px; }
   pointer-events: none;
 }
 .modal-info-col {
-  padding: 28px 28px 24px;
+  flex: 0 0 55%;
+  padding: 40px;
   display: flex;
   flex-direction: column;
   gap: 0;
+  position: relative; /* прив'язка для форми швидкого замовлення (.modal-buy-form) */
+  overflow-y: auto;
+  max-height: 100%;
 }
 .modal-close {
   position: absolute;
@@ -1054,22 +1069,28 @@ main { padding-bottom: 80px; }
   font-size: .82rem;
 }
 
-/* ── BUY MINI-FORM inside modal ── */
+/* ── Форма швидкого замовлення: виїжджає справа поверх правої колонки ── */
 .modal-buy-form {
-  display: none;
+  position: absolute;
+  inset: 0;
+  background: var(--panel);
+  border-left: 1px solid var(--border);
+  padding: 40px 30px;
+  box-sizing: border-box;
+  display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 10px;
-  margin-top: 14px;
-  padding: 18px;
-  background: rgba(255,255,255,.03);
-  border: 1px solid rgba(255,255,255,.08);
-  border-radius: 18px;
-  animation: formIn .22s ease both;
+  transform: translateX(100%);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform .3s ease-out, opacity .3s ease-out;
+  z-index: 5;
 }
-.modal-buy-form.open { display: flex; }
-@keyframes formIn {
-  from { opacity:0; transform:translateY(6px); }
-  to   { opacity:1; transform:translateY(0); }
+.modal-buy-form.open {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
 }
 .modal-buy-form h4 { margin: 0 0 4px; font-size: 1rem; }
 .modal-buy-form p { margin: 0 0 8px; font-size: .82rem; color: var(--muted); }
@@ -1160,8 +1181,9 @@ main { padding-bottom: 80px; }
 }
 
 @media (max-width: 720px) {
-  .modal-box { grid-template-columns: 1fr; }
-  .modal-photo-col { border-radius: 32px 32px 0 0; min-height: 240px; }
+  .modal-box { flex-direction: column; overflow-y: auto; }
+  .modal-photo-col, .modal-info-col { flex: 1 1 auto; }
+  .modal-photo-col { border-radius: 32px 32px 0 0; border-right: none; min-height: 240px; }
   .modal-phone-img { width: 140px; height: 180px; }
 }
 
@@ -1182,133 +1204,12 @@ main { padding-bottom: 80px; }
     aspect-ratio: 3 / 4;
 }
 
-/* ==========================================
-   ОНОВЛЕННЯ ДЛЯ МОДАЛЬНОГО ВІКНА AppleX
-   ========================================== */
-
-/* 1. Обмежуємо висоту модального вікна під розмір екрану */
-.modal-box {
-  max-height: 88vh !important; /* Вікно ніколи не вийде за межі екрану */
-  display: flex !important;
-  flex-direction: row !important;
-  overflow: hidden !important; /* Ховаємо все, що виходить за рамки */
-  position: relative;
-}
-
-/* 2. Зменшуємо колонку та розмір фото */
-.modal-photo-col {
-  flex: 0 0 38% !important; /* Зменшуємо займану ширину фото з 50% до 38% */
-  max-height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px !important;
-  background: rgba(0, 0, 0, 0.15);
-}
-
-.modal-phone-img {
-  max-width: 90% !important;
-  max-height: 250px !important; /* Жорстко обмежуємо висоту картинки */
-  object-fit: contain !important;
-}
-
-/* 3. Безпечний скрол для інформаційної колонки */
-.modal-info-col {
-  flex: 0 0 62% !important;
-  max-height: 100%;
-  overflow-y: auto; /* Якщо параметрів або кнопок буде забагато — з'явиться зручний внутрішній скрол */
-  padding: 30px !important;
-  display: flex;
-  flex-direction: column;
-}
-
-/* 4. Трансформація форми замовлення у бічну панель */
-.modal-buy-form {
-  position: absolute !important;
-  top: 0;
-  right: 0;
-  width: 100%;
-  height: 100%;
-  background: #121214 !important; /* Колір вашої панелі var(--panel), щоб перекрити опції */
-  padding: 40px 30px;
-  box-sizing: border-box;
-  z-index: 99;
-  border-left: 1px solid var(--border);
-  
-  /* Ефект виїзду справа наліво */
-  display: none;
-  transform: translateX(100%);
-  opacity: 0;
-  transition: transform 0.3s ease-out, opacity 0.3s ease-out;
-}
-
-/* Спрацьовує автоматично, коли ваш JS робить формі display: block або flex */
-.modal-buy-form[style*="display: block"],
-.modal-buy-form[style*="display: flex"],
-.modal-buy-form.active {
-  display: flex !important;
-  flex-direction: column;
-  justify-content: center;
-  transform: translateX(0) !important;
-  opacity: 1 !important;
-}
-
-/* ========================================================
-   ОНОВЛЕНИЙ КАТАЛОГ AppleX: КРАСИВА ТА ШИРОКА МОДАЛКА
-   ======================================================== */
-
-/* Робимо загальне вікно значно ширшим, щоб фото не тиснулося */
-.modal-box {
-  width: 95% !important;
-  max-width: 1050px !important; /* Збільшено ширину для балансу фото та опцій */
-  height: auto !important;
-  max-height: 90vh !important; /* Щоб не вилазило за рамки екрану ноутбуків */
-  display: flex !important;
-  flex-direction: row !important;
-  border-radius: var(--radius-xl) !important;
-  background: var(--panel) !important;
-  overflow: hidden !important;
-  box-shadow: var(--shadow) !important;
-}
-
-/* Колонці з фото даємо більше простору */
-.modal-photo-col {
-  flex: 0 0 45% !important; /* Фото тепер займає солідні 45% ширини вікна */
-  background: rgba(255, 255, 255, 0.01) !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  padding: 40px !important;
-  border-right: 1px solid var(--border) !important;
-}
-
-/* Налаштування самого зображення iPhone */
-.modal-phone-img {
-  max-width: 100% !important;
-  max-height: 380px !important; /* Фото велике, чітке і не стиснуте */
-  object-fit: contain !important;
-}
-
-/* Інформаційна колонка (пам'ять, колір, кнопки) */
-.modal-info-col {
-  flex: 0 0 55% !important;
-  padding: 40px !important;
-  display: flex !important;
-  flex-direction: column !important;
-  overflow-y: auto !important; /* Якщо контенту буде забагато, з'явиться внутрішній скрол */
-}
-
-/* ── ГОЛОВНА МАГІЯ: Приховуємо все зайве під час оформлення заявки ── */
+/* Додатково ховаємо контент товару, поки відкрита форма замовлення
+   (сама форма й так перекриває цю область, це підстраховка) */
 .modal-info-col.buy-active .modal-subtitle,
 .modal-info-col.buy-active .modal-price-row,
 .modal-info-col.buy-active .modal-selector,
 .modal-info-col.buy-active .modal-desc,
 .modal-info-col.buy-active .modal-actions {
-  display: none !important; /* Повністю ховаємо нижні кнопки, селектори та опис! */
-}
-
-/* Стиль для самої форми швидкого замовлення */
-.modal-buy-form {
-  width: 100% !important;
-  margin-top: 15px !important;
+  visibility: hidden;
 }
