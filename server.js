@@ -251,6 +251,42 @@ app.post('/api/admin/tradeins/:id/toggle', (req, res) => {
     });
 });
 
+// Очистити всі замовлення
+app.post('/api/admin/orders/clear', (req, res) => {
+    db.run(`DELETE FROM orders`, [], (err) => {
+        if (err) return res.status(500).json({ success: false, message: 'Помилка БД' });
+        console.log('[БД] Усі замовлення видалено через адмінку.');
+        res.json({ success: true });
+    });
+});
+
+// Очистити всі заявки Trade-In
+app.post('/api/admin/tradeins/clear', (req, res) => {
+    db.run(`DELETE FROM tradeins`, [], (err) => {
+        if (err) return res.status(500).json({ success: false, message: 'Помилка БД' });
+        console.log('[БД] Усі заявки Trade-In видалено через адмінку.');
+        res.json({ success: true });
+    });
+});
+
+// Очистити всі замовлення
+app.post('/api/admin/orders/clear', (req, res) => {
+    db.run(`DELETE FROM orders`, (err) => {
+        if (err) return res.status(500).json({ success: false, message: 'Помилка БД' });
+        console.log('[БД] Усі замовлення видалено з адмінки.');
+        res.json({ success: true });
+    });
+});
+
+// Очистити всі заявки Trade-In
+app.post('/api/admin/tradeins/clear', (req, res) => {
+    db.run(`DELETE FROM tradeins`, (err) => {
+        if (err) return res.status(500).json({ success: false, message: 'Помилка БД' });
+        console.log('[БД] Усі заявки Trade-In видалено з адмінки.');
+        res.json({ success: true });
+    });
+});
+
 app.listen(PORT, () => {
     console.log(`Сервер AppleX працює на http://localhost:${PORT}`);
     console.log(`Адмінка доступна на http://localhost:${PORT}/admin`);

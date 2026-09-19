@@ -218,7 +218,9 @@
       <div class="wp-line" data-wl="2"></div>
       <div class="wp-step" data-wp="3"><div class="wp-dot"><span>3</span></div><div class="wp-label">Новий iPhone</div></div>
       <div class="wp-line" data-wl="3"></div>
-      <div class="wp-step" data-wp="4"><div class="wp-dot"><span>4</span></div><div class="wp-label">Підсумок</div></div>
+      <div class="wp-step" data-wp="4"><div class="wp-dot"><span>4</span></div><div class="wp-label">Конфігурація</div></div>
+      <div class="wp-line" data-wl="4"></div>
+      <div class="wp-step" data-wp="5"><div class="wp-dot"><span>5</span></div><div class="wp-label">Підсумок</div></div>
     </div>
 
     <!-- ══ КРОК 1: Яку модель здаєш ══ -->
@@ -297,8 +299,52 @@
       </div>
     </div>
 
-    <!-- ══ КРОК 4: Підсумок ══ -->
+    <!-- ══ КРОК 4: Конфігурація нового iPhone ══ -->
     <div class="wizard-step" data-step="4">
+      <div class="step2-layout">
+        <div>
+          <div class="step-title">Конфігурація нового iPhone</div>
+          <p class="step-sub-text">Обери стан, пам'ять, колір і формат SIM для моделі, яку хочеш отримати</p>
+
+          <div style="margin-bottom:20px">
+            <div style="font-weight:700;margin-bottom:8px">Стан</div>
+            <div class="chips-row" id="get-cond-chips"></div>
+          </div>
+
+          <div style="margin-bottom:20px">
+            <div style="font-weight:700;margin-bottom:8px">Об'єм пам'яті</div>
+            <div class="chips-row" id="get-storage-chips"></div>
+          </div>
+
+          <div style="margin-bottom:20px">
+            <div style="font-weight:700;margin-bottom:8px">Колір</div>
+            <div class="color-dots" id="get-color-dots"></div>
+            <div id="get-color-name" style="font-size:.82rem;color:var(--muted);margin-top:6px"></div>
+          </div>
+
+          <div style="margin-bottom:20px">
+            <div style="font-weight:700;margin-bottom:8px">Формат SIM</div>
+            <div class="chips-row" id="get-sim-chips"></div>
+          </div>
+        </div>
+
+        <!-- Прев'ю нового iPhone з ціною обраної конфігурації -->
+        <div class="step2-preview">
+          <img class="preview-img" id="step4-photo" src="" alt="" />
+          <div class="prev-name"  id="step4-name">—</div>
+          <div class="prev-sim"   id="step4-sim-label">—</div>
+          <div class="prev-price" id="step4-price" style="color:var(--accent)">— ₴</div>
+          <div class="prev-sub">Ціна обраної конфігурації</div>
+        </div>
+      </div>
+      <div class="wizard-nav">
+        <button class="back-btn" data-back>← Назад</button>
+        <button class="btn primary" id="step4-next">Далі →</button>
+      </div>
+    </div>
+
+    <!-- ══ КРОК 5: Підсумок ══ -->
+    <div class="wizard-step" data-step="5">
       <div class="step-title">Підсумок обміну</div>
       <p class="step-sub-text">Перевір деталі та відправ заявку</p>
       <div class="summary-grid">
@@ -534,8 +580,60 @@
   var state = {
     step: 1,
     give: { model:null, storage:null, color:null, sim:null, condition:'Хороший' },
-    get:  { model:null, condition:'all' }
+    get:  { model:null, condition:'all', cond:null, storage:null, color:null, sim:null }
   };
+
+  // -----------------------------------------------------------
+  // Ціна нового iPhone залежно від обраного об'єму пам'яті
+  // -----------------------------------------------------------
+  // Умовна "вартість" кожного об'єму — різниця між обраним і
+  // базовим об'ємом моделі й дає надбавку до ціни.
+  var STORAGE_STEP = {
+    '64 GB': 0, '128 GB': 1500, '256 GB': 5000,
+    '512 GB': 9000, '1 TB': 14000, '2 TB': 20000
+  };
+
+  function storageDelta(model, storage) {
+    var base   = STORAGE_STEP[model.storages[0]] || 0;
+    var chosen = STORAGE_STEP[storage] || 0;
+    return chosen - base;
+  }
+
+  // Які стани доступні для конкретної моделі.
+  // "Новий" — лише якщо є buyPrice, "Б/У" — лише якщо є usedPrice.
+  function availableConds(model) {
+    var list = [];
+    if (model.buyPrice)  list.push({ key:'new',  label:'Новий' });
+    if (model.usedPrice) list.push({ key:'used', label:'Вживаний (Б/У)' });
+    if (!list.length)    list.push({ key:'new',  label:'Новий' });
+    return list;
+  }
+
+  function defaultCond(model, filter) {
+    var conds = availableConds(model).map(function(c){ return c.key; });
+    if (filter === 'used' && conds.indexOf('used') !== -1) return 'used';
+    if (filter === 'new'  && conds.indexOf('new')  !== -1) return 'new';
+    return conds[0];
+  }
+
+  function getBuyPrice(model, storage, cond) {
+    if (!model) return 0;
+    storage = storage || model.storages[0];
+
+    // Для нових моделей беремо точну ціну з каталогу (PRICE_TABLE у script.js),
+    // щоб Trade-In і каталог показували однакові цифри.
+    if (cond !== 'used' && typeof PRICE_TABLE !== 'undefined') {
+      var table = PRICE_TABLE[model.name];
+      if (table && table[storage]) return table[storage];
+    }
+
+    var base;
+    if      (cond === 'used' && model.usedPrice) base = model.usedPrice;
+    else if (model.buyPrice)                     base = model.buyPrice;
+    else                                         base = model.usedPrice || Math.round(model.tradeBase * 1.25);
+
+    return Math.max(0, base + storageDelta(model, storage));
+  }
 
   // ── Крок 1: Сітка моделей що здаємо ──
   function buildGiveGrid() {
@@ -667,10 +765,10 @@
 
       // Підпис: ціна залежно від фільтра
       var sub = '';
-      if      (cf==='used' && m.usedPrice) sub = 'Б/У · '+fmt(m.usedPrice);
-      else if (cf==='new'  && m.buyPrice)  sub = 'Новий · '+fmt(m.buyPrice);
+      if      (cf==='used' && m.usedPrice) sub = 'Б/У · від '+fmt(m.usedPrice);
+      else if (cf==='new'  && m.buyPrice)  sub = 'Новий · від '+fmt(m.buyPrice);
       else {
-        if (m.buyPrice)  sub += fmt(m.buyPrice);
+        if (m.buyPrice)  sub += 'від '+fmt(m.buyPrice);
         if (m.buyPrice && m.usedPrice) sub += ' / ';
         if (m.usedPrice) sub += 'Б/У·'+fmt(m.usedPrice);
       }
@@ -682,14 +780,24 @@
         +'</div>';
     }).join('');
 
-    state.get.model = null;
+    state.get.model   = null;
+    state.get.cond    = null;
+    state.get.storage = null;
+    state.get.color   = null;
+    state.get.sim     = null;
     document.getElementById('step3-next').disabled = true;
 
     grid.querySelectorAll('.model-tile').forEach(function(tile){
       tile.addEventListener('click', function(){
         grid.querySelectorAll('.model-tile').forEach(function(t){ t.classList.remove('selected'); });
         tile.classList.add('selected');
-        state.get.model = MODELS.find(function(m){ return m.name === tile.dataset.gm; });
+        state.get.model   = MODELS.find(function(m){ return m.name === tile.dataset.gm; });
+        // Одразу виставляємо базову конфігурацію — користувач змінить її на кроці 4
+        state.get.storage = state.get.model.storages[0];
+        state.get.color   = state.get.model.colors[0];
+        state.get.sim     = state.get.model.sims[0];
+        // Стан за замовчуванням: враховуємо фільтр кроку 3 і те, що реально є в моделі
+        state.get.cond    = defaultCond(state.get.model, state.get.condition);
         document.getElementById('step3-next').disabled = false;
       });
     });
@@ -705,17 +813,106 @@
     });
   });
 
-  // ── Крок 4: Підсумок з реальними фото ──
+  // ── Крок 4: Конфігурація нового iPhone (пам'ять, колір, SIM) ──
+  function populateStep4() {
+    var m = state.get.model;
+    if (!m) return;
+
+    // Чіпи стану — тільки ті варіанти, що реально є для цієї моделі
+    var conds = availableConds(m);
+    if (conds.map(function(c){ return c.key; }).indexOf(state.get.cond) === -1) {
+      state.get.cond = conds[0].key;
+    }
+    var cc = document.getElementById('get-cond-chips');
+    cc.innerHTML = conds.map(function(c){
+      return '<div class="sz-chip'+(c.key===state.get.cond?' selected':'')+'" data-cond="'+c.key+'">'+c.label+'</div>';
+    }).join('');
+    cc.querySelectorAll('.sz-chip').forEach(function(c){
+      c.addEventListener('click', function(){
+        cc.querySelectorAll('.sz-chip').forEach(function(x){ x.classList.remove('selected'); });
+        c.classList.add('selected');
+        state.get.cond = c.dataset.cond;
+        refreshGetPreview();
+      });
+    });
+
+    // Чіпи пам'яті
+    var sc = document.getElementById('get-storage-chips');
+    sc.innerHTML = m.storages.map(function(s){
+      return '<div class="sz-chip'+(s===state.get.storage?' selected':'')+'" data-s="'+s+'">'+s+'</div>';
+    }).join('');
+    sc.querySelectorAll('.sz-chip').forEach(function(c){
+      c.addEventListener('click', function(){
+        sc.querySelectorAll('.sz-chip').forEach(function(x){ x.classList.remove('selected'); });
+        c.classList.add('selected');
+        state.get.storage = c.dataset.s;
+        refreshGetPreview();
+      });
+    });
+
+    // Кольорові кружечки
+    var cd = document.getElementById('get-color-dots');
+    cd.innerHTML = m.colors.map(function(cl,i){
+      return '<div class="color-dot'+(i===0?' selected':'')+'" data-ci="'+i+'" style="background:'+cl.c+'" title="'+cl.n+'"></div>';
+    }).join('');
+    state.get.color = state.get.color || m.colors[0];
+    document.getElementById('get-color-name').textContent = state.get.color.n;
+    cd.querySelectorAll('.color-dot').forEach(function(d){
+      d.addEventListener('click', function(){
+        cd.querySelectorAll('.color-dot').forEach(function(x){ x.classList.remove('selected'); });
+        d.classList.add('selected');
+        state.get.color = m.colors[+d.dataset.ci];
+        document.getElementById('get-color-name').textContent = state.get.color.n;
+        refreshGetPreview();
+      });
+    });
+
+    // Чіпи SIM
+    var simWrap = document.getElementById('get-sim-chips');
+    simWrap.innerHTML = m.sims.map(function(s){
+      return '<div class="sz-chip'+(s===state.get.sim?' selected':'')+'" data-sim="'+s+'">'+s+'</div>';
+    }).join('');
+    simWrap.querySelectorAll('.sz-chip').forEach(function(c){
+      c.addEventListener('click', function(){
+        simWrap.querySelectorAll('.sz-chip').forEach(function(x){ x.classList.remove('selected'); });
+        c.classList.add('selected');
+        state.get.sim = c.dataset.sim;
+        refreshGetPreview();
+      });
+    });
+
+    refreshGetPreview();
+  }
+
+  // Оновлення прев'ю кроку 4 (фото + ціна обраної конфігурації)
+  function refreshGetPreview() {
+    var m = state.get.model;
+    if (!m) return;
+    var price  = getBuyPrice(m, state.get.storage, state.get.cond);
+    var imgUrl = modelImg(m.name);
+    var photo  = document.getElementById('step4-photo');
+
+    if (imgUrl) {
+      photo.src = imgUrl;
+      photo.alt = m.name;
+      photo.style.display = 'block';
+    } else {
+      photo.style.display = 'none';
+    }
+
+    document.getElementById('step4-name').textContent      = m.name + ' · ' + state.get.storage;
+    document.getElementById('step4-sim-label').textContent = (state.get.sim || m.sims[0]) + ' · ' + (state.get.color ? state.get.color.n : '');
+    document.getElementById('step4-price').textContent     = fmt(price);
+  }
+
+  // ── Крок 5: Підсумок з реальними фото ──
   function fillSummary() {
     var gm  = state.give.model;
     var gtm = state.get.model;
     if (!gm || !gtm) return;
 
     var tradeVal = calcTrade(gm, state.give.storage, state.give.condition);
-    var buyPrice;
-    if (state.get.condition === 'used' && gtm.usedPrice) buyPrice = gtm.usedPrice;
-    else if (gtm.buyPrice)  buyPrice = gtm.buyPrice;
-    else                    buyPrice = gtm.usedPrice || Math.round(gtm.tradeBase * 1.25);
+    var buyPrice = getBuyPrice(gtm, state.get.storage, state.get.cond);
 
     var topup = Math.max(0, buyPrice - tradeVal);
 
@@ -734,7 +931,11 @@
     document.getElementById('sum-give-specs').textContent = state.give.storage + ' · ' + state.give.condition + ' · ' + (state.give.sim || gm.sims[0]);
     document.getElementById('sum-give-price').textContent = fmt(tradeVal);
     document.getElementById('sum-get-model').textContent  = gtm.name;
-    document.getElementById('sum-get-specs').textContent  = gtm.storages[0] + (state.get.condition === 'used' ? ' · Б/У' : ' · Новий');
+    document.getElementById('sum-get-specs').textContent  =
+        (state.get.storage || gtm.storages[0])
+        + ' · ' + (state.get.color ? state.get.color.n : gtm.colors[0].n)
+        + ' · ' + (state.get.sim || gtm.sims[0])
+        + (state.get.cond === 'used' ? ' · Б/У' : ' · Новий');
     document.getElementById('sum-get-price').textContent  = fmt(buyPrice);
     document.getElementById('sum-topup').textContent      = fmt(topup);
   }
@@ -747,7 +948,8 @@
   // Кнопки "Далі"
   document.getElementById('step1-next').addEventListener('click', function(){ populateStep2(); goStep(2); });
   document.getElementById('step2-next').addEventListener('click', function(){ buildGetGrid(state.get.condition); goStep(3); });
-  document.getElementById('step3-next').addEventListener('click', function(){ fillSummary(); goStep(4); });
+  document.getElementById('step3-next').addEventListener('click', function(){ populateStep4(); goStep(4); });
+  document.getElementById('step4-next').addEventListener('click', function(){ fillSummary(); goStep(5); });
 
   // Модальне вікно
   document.getElementById('open-modal-btn').addEventListener('click', function(){
@@ -780,8 +982,12 @@
 
     // Витягуємо дані з калькулятора
     var giveModel = state.give.model.name + " " + state.give.storage + " (" + state.give.condition + ")";
-    var getCondLabel = state.get.condition === 'used' ? 'Б/У' : 'Новий';
-    var getModel  = state.get.model.name + " " + state.get.model.storages[0] + " (" + getCondLabel + ")";
+    var getCondLabel = state.get.cond === 'used' ? 'Б/У' : 'Новий';
+    var getModel  = state.get.model.name
+        + " " + (state.get.storage || state.get.model.storages[0])
+        + ", " + (state.get.color ? state.get.color.n : state.get.model.colors[0].n)
+        + ", " + (state.get.sim || state.get.model.sims[0])
+        + " (" + getCondLabel + ")";
     var topup     = document.getElementById('sum-topup').textContent;
 
     try {

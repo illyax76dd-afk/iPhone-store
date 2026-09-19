@@ -67,6 +67,16 @@
     cursor: pointer;
     font-weight: 700;
   }
+  .clear-btn {
+    padding: 10px 18px;
+    border-radius: 999px;
+    border: 1px solid rgba(239,68,68,.35);
+    background: rgba(239,68,68,.1);
+    color: #f87171;
+    cursor: pointer;
+    font-weight: 700;
+  }
+  .clear-btn:hover { background: rgba(239,68,68,.18); }
   .tab-row { display: flex; align-items: center; }
   table {
     width: 100%;
@@ -102,6 +112,17 @@
   .status-btn.new { background: rgba(255,138,31,.15); color: var(--accent-2); }
   .status-btn.done { background: rgba(67,209,122,.15); color: var(--good); }
   .empty-msg { color: var(--muted); padding: 30px; text-align: center; }
+  .clear-btn {
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,80,80,.3);
+    background: rgba(255,80,80,.08);
+    color: #ff8a8a;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: .85rem;
+  }
+  .clear-btn:hover { background: rgba(255,80,80,.15); }
   .panel-section { display: none; }
   .panel-section.active { display: block; }
 </style>
@@ -115,10 +136,15 @@
     <button class="tab-btn active" data-tab="orders">Замовлення <span class="badge" id="ordersCount">0</span></button>
     <button class="tab-btn" data-tab="tradeins">Trade-In <span class="badge" id="tradeinsCount">0</span></button>
   </div>
+  <button class="clear-btn" id="clearOrdersBtn" style="display:none;">🗑 Очистити замовлення</button>
+  <button class="clear-btn" id="clearTradeinsBtn" style="display:none;">🗑 Очистити Trade-In</button>
   <button class="refresh-btn" id="refreshBtn">↻ Оновити</button>
 </div>
 
 <div class="panel-section active" id="panel-orders">
+  <div style="margin-bottom:12px;">
+    <button class="clear-btn" data-kind="orders">🗑 Очистити всі замовлення</button>
+  </div>
   <table>
     <thead>
       <tr>
@@ -131,6 +157,9 @@
 </div>
 
 <div class="panel-section" id="panel-tradeins">
+  <div style="margin-bottom:12px;">
+    <button class="clear-btn" data-kind="tradeins">🗑 Очистити всі заявки Trade-In</button>
+  </div>
   <table>
     <thead>
       <tr>
@@ -218,17 +247,48 @@ document.addEventListener('click', async (e) => {
     return;
   }
 
+  const clearBtn = e.target.closest('.clear-btn');
+  if (clearBtn) {
+    const kind = clearBtn.dataset.kind;
+    const label = kind === 'orders' ? 'замовлення' : 'заявки Trade-In';
+    const sure = confirm(`Точно видалити ВСІ ${label}? Це незворотньо.`);
+    if (!sure) return;
+    await fetch(`/api/admin/${kind}/clear`, { method: 'POST' });
+    loadAll();
+    return;
+  }
+
   const tab = e.target.closest('.tab-btn');
   if (tab) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.panel-section').forEach(p => p.classList.remove('active'));
     tab.classList.add('active');
     document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+    updateClearButtonVisibility(tab.dataset.tab);
   }
 });
 
+function updateClearButtonVisibility(activeTab) {
+  document.getElementById('clearOrdersBtn').style.display = activeTab === 'orders' ? '' : 'none';
+  document.getElementById('clearTradeinsBtn').style.display = activeTab === 'tradeins' ? '' : 'none';
+}
+
+async function clearAll(kind, label) {
+  const typed = prompt(`Це незворотно видалить УСІ ${label} з бази.\nЩоб підтвердити, введи слово: видалити`);
+  if (typed !== 'видалити') {
+    if (typed !== null) alert('Скасовано — слово введено неправильно.');
+    return;
+  }
+  await fetch(`/api/admin/${kind}/clear`, { method: 'POST' });
+  loadAll();
+}
+
+document.getElementById('clearOrdersBtn').addEventListener('click', () => clearAll('orders', 'замовлення'));
+document.getElementById('clearTradeinsBtn').addEventListener('click', () => clearAll('tradeins', 'заявки Trade-In'));
+
 document.getElementById('refreshBtn').addEventListener('click', loadAll);
 
+updateClearButtonVisibility('orders');
 loadAll();
 setInterval(loadAll, 30000); // авто-оновлення кожні 30 секунд
 </script>
