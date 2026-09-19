@@ -1001,6 +1001,8 @@
       if (data.success) {
         document.getElementById('modal-form-content').style.display = 'none';
         document.getElementById('modal-success').style.display      = 'block';
+      } else {
+        alert(data.message || "Не вдалося відправити заявку. Перевірте введені дані.");
       }
     } catch (error) {
       console.error("Помилка відправки Trade-In:", error);

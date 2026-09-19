@@ -126,25 +126,83 @@ function escapeHtml(str) {
 }
 
 // -------------------------------------------------------------
+// Валідація вхідних даних (та сама логіка, що й у фронтенді,
+// але тепер обов'язкова — бекенд ніколи не довіряє клієнту)
+// -------------------------------------------------------------
+const PHONE_REGEX = /^\+380\d{9}$/;
+
+// ПІБ: мінімум 2 слова (прізвище + ім'я), без порожніх токенів
+function isValidName(name) {
+    if (typeof name !== 'string') return false;
+    const words = name.trim().split(/\s+/).filter(Boolean);
+    return words.length >= 2 && name.trim().length <= 100;
+}
+
+// Телефон: +380 і рівно 9 цифр після нього
+function isValidPhone(phone) {
+    return typeof phone === 'string' && PHONE_REGEX.test(phone.trim());
+}
+
+// Будь-яке інше обов'язкове текстове поле (модель, ціна тощо) —
+// не порожнє, не аномально довге (захист від сміттєвих запитів)
+function isValidText(value, maxLen = 300) {
+    return typeof value === 'string' && value.trim().length > 0 && value.trim().length <= maxLen;
+}
+
+// Перевіряє список полів запиту за схемою { поле: 'name'|'phone'|'text' }
+// Повертає масив помилок людською мовою (порожній масив = все ок)
+function validateFields(body, schema) {
+    const errors = [];
+    for (const [field, kind] of Object.entries(schema)) {
+        const value = body[field];
+        const ok = kind === 'name' ? isValidName(value)
+                 : kind === 'phone' ? isValidPhone(value)
+                 : isValidText(value);
+        if (!ok) errors.push(field);
+    }
+    return errors;
+}
+
+// -------------------------------------------------------------
 // Ендпоінт для збереження покупок з каталогу
 // -------------------------------------------------------------
 app.post('/api/order', (req, res) => {
-    const { name, phone, model, price } = req.body;
+    const { name, phone, model, price } = req.body || {};
+
+    const invalidFields = validateFields(req.body || {}, {
+        name: 'name',
+        phone: 'phone',
+        model: 'text',
+        price: 'text',
+    });
+
+    if (invalidFields.length) {
+        return res.status(400).json({
+            success: false,
+            message: 'Некоректні дані замовлення.',
+            fields: invalidFields,
+        });
+    }
+
+    const cleanName  = name.trim();
+    const cleanPhone = phone.trim();
+    const cleanModel = model.trim();
+    const cleanPrice = price.trim();
 
     const sql = `INSERT INTO orders (name, phone, model, price) VALUES (?, ?, ?, ?)`;
-    db.run(sql, [name, phone, model, price], function (err) {
+    db.run(sql, [cleanName, cleanPhone, cleanModel, cleanPrice], function (err) {
         if (err) {
             console.error('Помилка запису замовлення:', err.message);
             return res.status(500).json({ success: false, message: "Помилка БД" });
         }
-        console.log(`[БД] Замовлення №${this.lastID} від ${phone} збережено!`);
+        console.log(`[БД] Замовлення №${this.lastID} від ${cleanPhone} збережено!`);
 
         sendTelegramMessage(
             `🛒 <b>Нове замовлення №${this.lastID}</b>\n` +
-            `👤 Ім'я: ${escapeHtml(name)}\n` +
-            `📞 Телефон: ${escapeHtml(phone)}\n` +
-            `📱 Модель: ${escapeHtml(model)}\n` +
-            `💰 Ціна: ${escapeHtml(price)}`
+            `👤 Ім'я: ${escapeHtml(cleanName)}\n` +
+            `📞 Телефон: ${escapeHtml(cleanPhone)}\n` +
+            `📱 Модель: ${escapeHtml(cleanModel)}\n` +
+            `💰 Ціна: ${escapeHtml(cleanPrice)}`
         );
 
         res.json({ success: true, message: "Замовлення успішно записано в БД!" });
@@ -155,23 +213,45 @@ app.post('/api/order', (req, res) => {
 // Ендпоінт для збереження заявок Trade-In
 // -------------------------------------------------------------
 app.post('/api/trade-in', (req, res) => {
-    const { name, phone, giveModel, getModel, topup } = req.body;
+    const { name, phone, giveModel, getModel, topup } = req.body || {};
+
+    const invalidFields = validateFields(req.body || {}, {
+        name: 'name',
+        phone: 'phone',
+        giveModel: 'text',
+        getModel: 'text',
+        topup: 'text',
+    });
+
+    if (invalidFields.length) {
+        return res.status(400).json({
+            success: false,
+            message: 'Некоректні дані заявки Trade-In.',
+            fields: invalidFields,
+        });
+    }
+
+    const cleanName      = name.trim();
+    const cleanPhone     = phone.trim();
+    const cleanGiveModel = giveModel.trim();
+    const cleanGetModel  = getModel.trim();
+    const cleanTopup     = topup.trim();
 
     const sql = `INSERT INTO tradeins (name, phone, give_model, get_model, topup) VALUES (?, ?, ?, ?, ?)`;
-    db.run(sql, [name, phone, giveModel, getModel, topup], function (err) {
+    db.run(sql, [cleanName, cleanPhone, cleanGiveModel, cleanGetModel, cleanTopup], function (err) {
         if (err) {
             console.error('Помилка запису Trade-In:', err.message);
             return res.status(500).json({ success: false, message: "Помилка БД" });
         }
-        console.log(`[БД] Заявка Trade-In №${this.lastID} від ${phone} збережена!`);
+        console.log(`[БД] Заявка Trade-In №${this.lastID} від ${cleanPhone} збережена!`);
 
         sendTelegramMessage(
             `🔄 <b>Нова заявка Trade-In №${this.lastID}</b>\n` +
-            `👤 Ім'я: ${escapeHtml(name)}\n` +
-            `📞 Телефон: ${escapeHtml(phone)}\n` +
-            `📤 Здає: ${escapeHtml(giveModel)}\n` +
-            `📥 Хоче отримати: ${escapeHtml(getModel)}\n` +
-            `💰 Доплата: ${escapeHtml(topup)}`
+            `👤 Ім'я: ${escapeHtml(cleanName)}\n` +
+            `📞 Телефон: ${escapeHtml(cleanPhone)}\n` +
+            `📤 Здає: ${escapeHtml(cleanGiveModel)}\n` +
+            `📥 Хоче отримати: ${escapeHtml(cleanGetModel)}\n` +
+            `💰 Доплата: ${escapeHtml(cleanTopup)}`
         );
 
         res.json({ success: true, message: "Обмін успішно записано в БД!" });

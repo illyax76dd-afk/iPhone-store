@@ -1170,6 +1170,8 @@ function bindModal() {
     const data = await response.json();
     if (data.success) {
       document.getElementById('modalSuccess').style.display = 'block';
+    } else {
+      alert(data.message || "Не вдалося оформити замовлення. Перевірте введені дані.");
     }
   } catch (error) {
     console.error("Не вдалося надіслати замовлення на сервер:", error);
