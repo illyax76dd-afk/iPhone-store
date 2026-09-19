@@ -37,6 +37,10 @@
 
         <div class="catalog-toolbar">
           <input id="search" class="searchbox" type="search" placeholder="Пошук: iPhone 15, 128 GB, Black..." />
+          <button class="filters-toggle" type="button" id="filtersOpen" aria-controls="filtersPanel" aria-expanded="false">
+            <span>Фільтри</span>
+            <span class="ft-count" id="filtersToggleCount" style="display:none"></span>
+          </button>
           <div class="toolbar-right">
             <button class="chip active" type="button" data-condition="all">Усі</button>
             <button class="chip" type="button" data-condition="Новий">Новий</button>
@@ -45,7 +49,12 @@
         </div>
 
         <div class="catalog-layout">
-          <aside class="filters">
+          <div class="filters-backdrop" id="filtersBackdrop"></div>
+          <aside class="filters" id="filtersPanel">
+            <div class="filters-head">
+              <h3>Фільтри</h3>
+              <button class="filters-close" type="button" id="filtersClose" aria-label="Закрити фільтри">✕</button>
+            </div>
             <div class="panel">
 
               <!-- ── Серія ──────────────────────────── -->
@@ -142,6 +151,11 @@
                 <button class="btn secondary" type="button" data-reset>↺ Скинути фільтри</button>
               </div>
 
+              <!-- ── Показати результат (тільки на мобільному) ── -->
+              <div class="filters-apply">
+                <button class="btn primary" type="button" id="filtersApply">Показати <span data-count>0</span> товарів</button>
+              </div>
+
             </div>
           </aside>
 
@@ -176,7 +190,7 @@
         <img class="modal-phone-img" id="modalImg" src="" alt="" />
       </div>
       <!-- Info column -->
-      <div class="modal-info-col">
+      <div class="modal-info-col" style="position:relative;">
         <button class="modal-close" id="modalClose" aria-label="Закрити">✕</button>
 
         <div class="modal-title-row">

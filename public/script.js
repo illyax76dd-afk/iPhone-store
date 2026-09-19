@@ -432,7 +432,7 @@ function buildCatalog() {
   const search       = document.querySelector('#search');
   const conditionBtns= [...document.querySelectorAll('[data-condition]')];
   const resetBtn     = document.querySelector('[data-reset]');
-  const countEl      = document.querySelector('[data-count]');
+  const countEls     = [...document.querySelectorAll('[data-count]')];
   const summaryEl    = document.querySelector('[data-summary]');
   const emptyEl      = document.querySelector('[data-empty]');
 
@@ -475,12 +475,19 @@ function buildCatalog() {
 
     const filtered = getFilteredProducts();
 
-    countEl.textContent = filtered.length;
+    countEls.forEach(el => el.textContent = filtered.length);
     const condLabel = catalogState.status === 'all' ? 'Всі' : catalogState.status;
     const activeCount = catalogState.models.length + catalogState.storages.length +
         catalogState.sims.length + catalogState.years.length +
         (catalogState.priceMin !== null || catalogState.priceMax !== null ? 1 : 0);
     summaryEl.textContent = condLabel + (activeCount > 0 ? ` · ${activeCount} фільтр${activeCount > 4 ? 'ів' : activeCount > 1 ? 'и' : ''}` : '');
+
+    // Значок кількості активних фільтрів на мобільній кнопці «Фільтри»
+    const ftCount = document.getElementById('filtersToggleCount');
+    if (ftCount) {
+      if (activeCount > 0) { ftCount.textContent = activeCount; ftCount.style.display = ''; }
+      else ftCount.style.display = 'none';
+    }
 
     // Значки кількості на заголовках
     updateBadge('fgCountModel',   catalogState.models.length);
@@ -586,23 +593,103 @@ function buildCatalog() {
     render();
   });
 
-  render();
+  bindFiltersDrawer();
 
-  // ── Відкриття картки товару у модалці по кліку ──
-  grid.addEventListener('click', e => {
-    const card = e.target.closest('.product-card');
-    if (!card) return;
-    const idx = [...grid.querySelectorAll('.product-card')].indexOf(card);
-    const product = getFilteredProducts()[idx];
-    if (product) openModal(product);
+  render();
+}
+
+// -------------------------------------------------------------
+// МОБІЛЬНІ ФІЛЬТРИ — висувна панель знизу
+// На десктопі елементи керування приховані через CSS,
+// тому ця логіка там просто не задіюється.
+// -------------------------------------------------------------
+function bindFiltersDrawer() {
+  const panel    = document.getElementById('filtersPanel');
+  const backdrop = document.getElementById('filtersBackdrop');
+  const openBtn  = document.getElementById('filtersOpen');
+  const closeBtn = document.getElementById('filtersClose');
+  const applyBtn = document.getElementById('filtersApply');
+  if (!panel || !backdrop || !openBtn) return;
+
+  function openFilters() {
+    panel.classList.add('open');
+    backdrop.classList.add('open');
+    document.body.classList.add('filters-open');
+    openBtn.setAttribute('aria-expanded', 'true');
+    closeBtn?.focus();
+  }
+
+  function closeFilters() {
+    panel.classList.remove('open');
+    backdrop.classList.remove('open');
+    document.body.classList.remove('filters-open');
+    openBtn.setAttribute('aria-expanded', 'false');
+  }
+
+  openBtn.addEventListener('click', openFilters);
+  closeBtn?.addEventListener('click', closeFilters);
+  applyBtn?.addEventListener('click', closeFilters);
+  backdrop.addEventListener('click', closeFilters);
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && panel.classList.contains('open')) closeFilters();
   });
-  bindModal();
+
+  // Якщо екран став широким — прибираємо мобільний стан,
+  // щоб панель не лишилась "відкритою" на десктопі.
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 760 && panel.classList.contains('open')) closeFilters();
+  });
+}
+
+// -------------------------------------------------------------
+// TRADE-IN КАЛЬКУЛЯТОР (проста стара версія — для сумісності)
+// Основний wizard знаходиться в trade-in.html
+// -------------------------------------------------------------
+function buildTradeInEstimator() {
+  const box = document.querySelector('[data-estimate]');
+  if (!box) return;
+  const modelSelect = document.querySelector('#tradeModel');
+  const conditionSelect = document.querySelector('#tradeCondition');
+  const storageSelect = document.querySelector('#tradeStorage');
+  const button = document.querySelector('[data-calc]');
+  const result = document.querySelector('[data-result]');
+  const hint = document.querySelector('[data-hint]');
+
+  const baseValues = {
+    'iPhone 17 Pro Max': 48000, 'iPhone 17 Pro': 42000, 'iPhone 17 Air': 36000, 'iPhone 17': 32000, 'iPhone 17e': 25000,
+    'iPhone 16 Pro Max': 36000, 'iPhone 16 Pro': 32000, 'iPhone 16 Plus': 28500, 'iPhone 16': 26000,
+    'iPhone 15 Pro Max': 30000, 'iPhone 15 Plus': 22000, 'iPhone 15': 20000,
+    'iPhone 14 Pro': 22000, 'iPhone 14': 18000,
+    'iPhone 13 Pro': 17000, 'iPhone 13': 14000,
+    'iPhone 12 Pro': 12000, 'iPhone 12': 10000,
+    'iPhone 11': 8000, 'iPhone SE 2022': 6500
+  };
+
+  function calc() {
+    const model = modelSelect.value, condition = conditionSelect.value, storage = storageSelect.value;
+    let value = baseValues[model] || 8000;
+    if (storage === '128 GB') value += 1500;
+    if (storage === '256 GB') value += 3500;
+    if (storage === '512 GB') value += 5500;
+    if (storage === '1 TB') value += 9000;
+    if (condition === 'Добрий') value *= 0.88;
+    if (condition === 'Є сліди використання') value *= 0.75;
+    const min = Math.round(value * 0.9), max = Math.round(value * 1.06);
+    result.innerHTML = `<div class="result"><div class="small">Орієнтовна оцінка</div><div class="big">${nf.format(min)}–${nf.format(max)} ₴</div><div class="small">Під ${model} (${storage}), стан: ${condition.toLowerCase()}.</div></div>`;
+    hint.textContent = 'Оцінка орієнтовна. Фінальна сума залежить від діагностики, батареї та зовнішнього стану.';
+  }
+
+  button?.addEventListener('click', calc);
+  [modelSelect, conditionSelect, storageSelect].forEach(el => el?.addEventListener('change', calc));
+  calc();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
   setActiveNav();
   bindHeroButtons();
   buildCatalog();
+  buildTradeInEstimator();
 });
 
 // =============================================================
@@ -978,7 +1065,6 @@ function openModal(product) {
 
   // Reset buy form
   document.getElementById('modalBuyForm').classList.remove('open');
-  document.querySelector('.modal-info-col')?.classList.remove('buy-active');
   document.getElementById('modalSuccess').classList.remove('show');
   document.getElementById('modalPhone').value = '';
   document.getElementById('modalName').value = '';
@@ -1024,24 +1110,9 @@ function bindModal() {
   const overlay = document.getElementById('productModal');
   if (!overlay) return;
 
-  const modalInfoCol = overlay.querySelector('.modal-info-col');
-  const modalBuyForm = document.getElementById('modalBuyForm');
-
-  // Повертає модалку до перегляду товару (ховає форму замовлення)
-  function resetBuyForm() {
-    modalBuyForm.classList.remove('open');
-    modalInfoCol.classList.remove('buy-active');
-  }
-
-  document.getElementById('modalClose').addEventListener('click', () => {
-    resetBuyForm();
-    closeModal();
-  });
+  document.getElementById('modalClose').addEventListener('click', closeModal);
   overlay.addEventListener('click', e => {
-    if (e.target === overlay) {
-      resetBuyForm();
-      closeModal();
-    }
+    if (e.target === overlay) closeModal();
   });
 
   // Option clicks — delegated
@@ -1060,14 +1131,11 @@ function bindModal() {
     updateModalFromState();
   });
 
-  // Кнопка "Купити" — показує форму швидкого замовлення
+  // Buy button
   document.getElementById('modalBuyBtn').addEventListener('click', () => {
-    modalBuyForm.classList.add('open');
-    modalInfoCol.classList.add('buy-active');
+    const form = document.getElementById('modalBuyForm');
+    form.classList.toggle('open');
   });
-
-  // Кнопка "Повернутися до вибору" — ховає форму, показує картку товару
-  document.getElementById('modalBackToProductBtn').addEventListener('click', resetBuyForm);
 
   // Submit
   document.getElementById('modalSubmitBtn').addEventListener('click', async () => {
@@ -1101,7 +1169,7 @@ function bindModal() {
 
     const data = await response.json();
     if (data.success) {
-      document.getElementById('modalSuccess').classList.add('show');
+      document.getElementById('modalSuccess').style.display = 'block';
     }
   } catch (error) {
     console.error("Не вдалося надіслати замовлення на сервер:", error);
@@ -1173,3 +1241,66 @@ function showDetails(tab) {
   setTimeout(() => section.scrollIntoView({behavior: 'smooth', block: 'start'}), 80);
 }
 
+// buildCatalogWithModal is replaced by the buildCatalog override above
+
+// The original DOMContentLoaded at bottom of file calls buildCatalog().
+// We override buildCatalog globally so the original listener picks up our version.
+window._catalogBuilt = false;
+const _realBuildCatalog = buildCatalog;
+// eslint-disable-next-line no-global-assign
+buildCatalog = function () {
+  _realBuildCatalog();
+  if (window._catalogBuilt) return;
+  window._catalogBuilt = true;
+  const grid = document.querySelector('[data-products]');
+  if (!grid) return;
+  grid.addEventListener('click', e => {
+    const card = e.target.closest('.product-card');
+    if (!card) return;
+    const idx = [...grid.querySelectorAll('.product-card')].indexOf(card);
+    if (idx === -1) return;
+    const filtered = getFilteredProducts();
+    const product = filtered[idx];
+    if (product) openModal(product);
+  });
+  bindModal();
+};
+
+// Закриття форми замовлення та повернення до картки товару
+document.getElementById('modalBuyBackBtn')?.addEventListener('click', () => {
+  const buyForm = document.getElementById('modalBuyForm');
+  if (buyForm) {
+    buyForm.style.display = 'none';
+  }
+});
+
+// 1. Коли натискають кнопку "Купити" (відкриття форми)
+const modalBuyBtn = document.getElementById('modalBuyBtn');
+const modalBuyForm = document.getElementById('modalBuyForm');
+const modalInfoCol = document.querySelector('.modal-info-col');
+
+if (modalBuyBtn && modalBuyForm && modalInfoCol) {
+  modalBuyBtn.addEventListener('click', () => {
+    modalBuyForm.style.display = 'block';
+    modalInfoCol.classList.add('buy-active'); // Ховаємо нижні кнопки та селектори
+  });
+}
+
+// 2. Обробка нової кнопки "Повернутися до вибору" всередині форми
+const modalBackToProductBtn = document.getElementById('modalBackToProductBtn');
+if (modalBackToProductBtn && modalBuyForm && modalInfoCol) {
+  modalBackToProductBtn.addEventListener('click', () => {
+    modalBuyForm.style.display = 'none';
+    modalInfoCol.classList.remove('buy-active'); // Повертаємо нижні кнопки та селектори назад
+  });
+}
+
+// 3. ВАЖЛИВО: Знайдіть функцію, яка закриває В СЕ модальне вікно (на хрестик або клік поза вікном)
+// і додайте туди скидання класу, щоб наступний відкритий iPhone не запускався з прихованими кнопками:
+const modalClose = document.getElementById('modalClose');
+if (modalClose && modalBuyForm && modalInfoCol) {
+  modalClose.addEventListener('click', () => {
+    modalBuyForm.style.display = 'none';
+    modalInfoCol.classList.remove('buy-active'); // Скидаємо стан для наступних відкриттів
+  });
+}
