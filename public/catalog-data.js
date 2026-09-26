@@ -450,9 +450,12 @@ const COLOR_MAP = {
   'Yellow': '#eab308',
 };
 
-// All official colors per model
-// ── iPhone 17 серія (2025–2026) — ТІЛЬКИ реальні офіційні кольори ──
 const MODEL_COLORS = {
+  // ── iPhone 18 серія (2026)
+  'iPhone 18 Pro Max': ['Burgundy', 'Glacier Blue', 'Black', 'Silver'],
+  'iPhone 18 Pro':     ['Burgundy', 'Glacier Blue', 'Black', 'Silver'],
+
+  // ── iPhone 17 серія (2025–2026)
   // 3 кольори: Cosmic Orange, Deep Blue, Silver (алюмінієвий корпус)
   'iPhone 17 Pro Max': ['Cosmic Orange', 'Deep Blue', 'Silver'],
   'iPhone 17 Pro':     ['Cosmic Orange', 'Deep Blue', 'Silver'],
@@ -497,6 +500,8 @@ const MODEL_COLORS = {
 
 // All available storage options per model
 const MODEL_STORAGES = {
+  'iPhone 18 Pro Max': ['256 GB', '512 GB', '1 TB', '2 TB'],
+  'iPhone 18 Pro': ['256 GB', '512 GB', '1 TB', '2 TB'],
   'iPhone 17 Pro Max': ['256 GB', '512 GB', '1 TB', '2 TB'],
   'iPhone 17 Pro': ['256 GB', '512 GB', '1 TB'],
   'iPhone 17 Air': ['128 GB', '256 GB', '512 GB'],
@@ -523,13 +528,26 @@ const MODEL_STORAGES = {
 // Точні ціни (ринок України, травень 2026, ₴)
 // Використовується в модалці при зміні пам'яті або SIM
 const PRICE_TABLE = {
+
+  'iPhone 18 Pro Max': {
+    '256 GB': 84999,
+    '512 GB': 97999,
+    '1 TB':   123999,
+    '2 TB':   164999,
+  },
+    'iPhone 18 Pro': {
+    '256 GB': 77999,
+    '512 GB': 90999,
+    '1 TB':   117999,
+    '2 TB':   157999,
+  },
   'iPhone 17 Pro Max': {
     '256 GB': 71999,
     '512 GB': 81999,
     '1 TB':   91999,
     '2 TB':   101999,
   },
-  'iPhone 17 Pro': {        // 2 TB не існує — не додавати!
+  'iPhone 17 Pro': {     
     '256 GB': 61999,
     '512 GB': 71999,
     '1 TB':   81999,
@@ -634,6 +652,8 @@ const PRICE_TABLE = {
   },
 };
 const MODEL_DESCRIPTIONS = {
+  'iPhone 18 Pro Max': 'Флагман 2026 року з новим чипом A20 Pro, передовою камерою 48 Мп (зі змінною діафрагмою) і екраном 6.9" ProMotion 120 Гц. Титановий корпус, підекранний Face ID. До 41 год відео без підзарядки.',
+  'iPhone 18 Pro': 'A20 Pro, потрійна камера 48 Мп зі змінною діафрагмою, екран 6.3" ProMotion. Преміум у компактному форматі з ультратонкими рамками та системою підекранного Face ID.',
   'iPhone 17 Pro Max': 'Флагман 2025 року з чипом A19 Pro, камерою 48 Мп і екраном 6.9" ProMotion 120 Гц. Титановий корпус. До 39 год відео без підзарядки.',
   'iPhone 17 Pro': 'A19 Pro, потрійна камера 48 Мп, екран 6.3" ProMotion. Преміум у компактному форматі з ультратонкими рамками.',
   'iPhone 17 Air': 'Найтонший iPhone в історії — 5.5 мм. Чип A19, великий 6.6" дисплей, eSIM. Ідеально для тих, хто цінує легкість.',
@@ -659,6 +679,9 @@ const MODEL_DESCRIPTIONS = {
 
 // Specs per model
 const MODEL_SPECS = {
+ 
+  'iPhone 18 Pro Max': [['Чип', 'A20 Pro'], ['Дисплей', '6.9" OLED ProMotion 120 Гц'], ['Камера', '48 Мп + 48 Мп + 12 Мп'], ['Фронтальна', '24 Мп TrueDepth'], ['Батарея', 'До 41 год відео'], ['Корпус', 'Титан Grade 5'], ['Захист', 'IP68'], ['SIM', 'eSIM'], ['OS', 'iOS 26']],
+  'iPhone 18 Pro': [['Чип', 'A20 Pro'], ['Дисплей', '6.3" OLED ProMotion 120 Гц'], ['Камера', '48 Мп + 48 Мп + 12 Мп'], ['Батарея', 'До 33 год відео'], ['Корпус', 'Титан'], ['Захист', 'IP68'], ['SIM', 'eSIM'], ['OS', 'iOS 26']],
   'iPhone 17 Pro Max': [['Чип', 'A19 Pro'], ['Дисплей', '6.9" OLED ProMotion 120 Гц'], ['Камера', '48 Мп + 48 Мп + 12 Мп'], ['Фронтальна', '24 Мп TrueDepth'], ['Батарея', 'До 39 год відео'], ['Корпус', 'Титан Grade 5'], ['Захист', 'IP68'], ['SIM', 'eSIM'], ['OS', 'iOS 26']],
   'iPhone 17 Pro': [['Чип', 'A19 Pro'], ['Дисплей', '6.3" OLED ProMotion 120 Гц'], ['Камера', '48 Мп + 48 Мп + 12 Мп'], ['Батарея', 'До 33 год відео'], ['Корпус', 'Титан'], ['Захист', 'IP68'], ['SIM', 'eSIM'], ['OS', 'iOS 26']],
   'iPhone 17 Air': [['Чип', 'A19'], ['Дисплей', '6.6" OLED 60 Гц'], ['Камера', '48 Мп основна'], ['Товщина', '5.5 мм'], ['Батарея', 'До 26 год відео'], ['Захист', 'IP68'], ['SIM', 'eSIM'], ['OS', 'iOS 26']],
