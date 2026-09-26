@@ -400,7 +400,7 @@ const PRODUCTS = [
 // Порядок сортування моделей у каталозі (від новіших до старших)
 const modelOrder = [
   "iPhone Duo",
-  "iphone 18 Pro Max", "iphone 18 Pro",
+  "iPhone 18 Pro Max", "iPhone 18 Pro",
   "iPhone 17 Pro Max", "iPhone 17 Pro", "iPhone 17 Air", "iPhone 17", "iPhone 17e",
   "iPhone 16 Pro Max", "iPhone 16 Pro", "iPhone 16 Plus", "iPhone 16",
   "iPhone 15 Pro Max", "iPhone 15 Pro", "iPhone 15 Plus", "iPhone 15",
