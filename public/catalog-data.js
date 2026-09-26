@@ -21,6 +21,11 @@
 // Використовуються в каталозі та Trade-In
 // -------------------------------------------------------------
 const MODEL_IMAGES = {
+  // iPhone Duo
+  "iPhone Duo": "img/duo.png",
+  // iPhone 18 серія
+  "iPhone 18 Pro Max": "img/18-pro-max.png",
+  "iPhone 18 Pro": "img/18-pro.png",
   // iPhone 17 серія
   "iPhone 17 Pro Max": "img/17-pro-max.jpg",
   "iPhone 17 Pro": "img/17-pro.jpg",
@@ -58,7 +63,7 @@ const MODEL_IMAGES = {
 const PRODUCTS = [
   // ── iPhone Duo серія (2026) ──────────────────────────────────
     {
-    id: 36,
+    id: 38,
     model: "iPhone Duo",
     storage: "2 TB",
     color: "Night Sky",
@@ -84,7 +89,7 @@ const PRODUCTS = [
     id: 37,
     model: "iPhone 18 Pro",
     storage: "1 TB",
-    color: "Burgundy",
+    color: "Glacier Blue",
     price: 117999,
     condition: "Новий",
     year: 2026,
