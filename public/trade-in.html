@@ -411,7 +411,8 @@
   </div>
 </footer>
 
-<script src="script.js"></script>
+<script src="catalog-data.js"></script>
+  <script src="script.js"></script>
 <script>
 // =============================================================
 // Trade-In Wizard — логіка 4 кроків з реальними фото
@@ -438,100 +439,13 @@
   }
 
   // -----------------------------------------------------------
-  // База всіх моделей iPhone для wizard
+  // База всіх моделей iPhone для wizard.
+  // Раніше тут був окремий вручну прописаний список з власними
+  // цінами/пам'яттю/кольорами — тепер він будується з того самого
+  // PRODUCTS/PRICE_TABLE, що й каталог (catalog-data.js), тож цифри
+  // між каталогом і Trade-In більше ніколи не розійдуться.
   // -----------------------------------------------------------
-  var MODELS = [
-    // ── iPhone 17 серія (2025) ─────────────────────────────────
-    { name:"iPhone 17 Pro Max", year:2025, storages:["256 GB","512 GB","1 TB"],
-      colors:[{n:"Desert Titanium",c:"#c8956c"},{n:"Black Titanium",c:"#2c2c2e"},{n:"Silver",c:"#d4d4d8"}],
-      sims:["eSIM"], tradeBase:48000, buyPrice:69999, usedPrice:null },
-
-    { name:"iPhone 17 Pro", year:2025, storages:["128 GB","256 GB","512 GB"],
-      colors:[{n:"Cosmic Orange",c:"#c8702a"},{n:"Deep Blue",c:"#2a4a7a"},{n:"Silver",c:"#d4d4d8"}],
-      sims:["eSIM"], tradeBase:42000, buyPrice:62999, usedPrice:null },
-
-    { name:"iPhone 17 Air", year:2025, storages:["128 GB","256 GB"],
-      colors:[{n:"Sky Blue",c:"#7ab8d4"},{n:"Starlight",c:"#e8e0d5"},{n:"Black",c:"#1a1a1a"}],
-      sims:["eSIM"], tradeBase:36000, buyPrice:54999, usedPrice:null },
-
-    { name:"iPhone 17", year:2025, storages:["128 GB","256 GB","512 GB"],
-      colors:[{n:"Black",c:"#1a1a1a"},{n:"White",c:"#e8e8e8"},{n:"Sage",c:"#7a9a7a"},{n:"Lavender",c:"#9a8ab5"},{n:"Mist Blue",c:"#7a9ab5"}],
-      sims:["eSIM"], tradeBase:32000, buyPrice:47999, usedPrice:null },
-
-    { name:"iPhone 17e", year:2025, storages:["128 GB","256 GB"],
-      colors:[{n:"Black",c:"#1a1a1a"},{n:"White",c:"#e8e8e8"},{n:"Pink",c:"#f4a9c0"},{n:"Teal",c:"#4a9b8f"},{n:"Ultramarine",c:"#5a6aab"}],
-      sims:["eSIM"], tradeBase:25000, buyPrice:37999, usedPrice:null },
-
-    // ── iPhone 16 серія (2024) ─────────────────────────────────
-    { name:"iPhone 16 Pro Max", year:2024, storages:["256 GB","512 GB","1 TB"],
-      colors:[{n:"Titanium Black",c:"#2c2c2e"},{n:"Natural Titanium",c:"#c4b59a"},{n:"Desert Titanium",c:"#c8956c"},{n:"White Titanium",c:"#f5f0eb"}],
-      sims:["eSIM"], tradeBase:36000, buyPrice:56999, usedPrice:48000 },
-
-    { name:"iPhone 16 Pro", year:2024, storages:["128 GB","256 GB","512 GB"],
-      colors:[{n:"Titanium Black",c:"#2c2c2e"},{n:"Natural Titanium",c:"#c4b59a"},{n:"Desert Titanium",c:"#c8956c"},{n:"White Titanium",c:"#f5f0eb"}],
-      sims:["eSIM"], tradeBase:32000, buyPrice:49999, usedPrice:42000 },
-
-    { name:"iPhone 16 Plus", year:2024, storages:["128 GB","256 GB","512 GB"],
-      colors:[{n:"Black",c:"#1a1a1a"},{n:"White",c:"#e8e8e8"},{n:"Pink",c:"#f4a9c0"},{n:"Teal",c:"#4a9b8f"},{n:"Ultramarine",c:"#5a6aab"}],
-      sims:["eSIM"], tradeBase:28500, buyPrice:45999, usedPrice:38000 },
-
-    { name:"iPhone 16", year:2024, storages:["128 GB","256 GB","512 GB"],
-      colors:[{n:"Black",c:"#1a1a1a"},{n:"White",c:"#e8e8e8"},{n:"Pink",c:"#f4a9c0"},{n:"Teal",c:"#4a9b8f"},{n:"Ultramarine",c:"#5a6aab"}],
-      sims:["eSIM"], tradeBase:26000, buyPrice:40999, usedPrice:34000 },
-
-    // ── iPhone 15 серія (2023) ─────────────────────────────────
-    { name:"iPhone 15 Pro Max", year:2023, storages:["256 GB","512 GB","1 TB"],
-      colors:[{n:"Natural Titanium",c:"#c4b59a"},{n:"Black Titanium",c:"#3a3a3a"},{n:"White Titanium",c:"#f5f0eb"},{n:"Blue Titanium",c:"#6a8aaa"}],
-      sims:["SIM + eSIM","eSIM"], tradeBase:30000, buyPrice:45999, usedPrice:36000 },
-
-    { name:"iPhone 15 Pro", year:2023, storages:["128 GB","256 GB","512 GB"],
-      colors:[{n:"Natural Titanium",c:"#c4b59a"},{n:"Black Titanium",c:"#3a3a3a"},{n:"White Titanium",c:"#f5f0eb"},{n:"Blue Titanium",c:"#6a8aaa"}],
-      sims:["SIM + eSIM","eSIM"], tradeBase:26000, buyPrice:39999, usedPrice:30000 },
-
-    { name:"iPhone 15 Plus", year:2023, storages:["128 GB","256 GB","512 GB"],
-      colors:[{n:"Black",c:"#1a1a1a"},{n:"Green",c:"#4a7c5a"},{n:"Yellow",c:"#d4b84a"},{n:"Pink",c:"#f4a9c0"},{n:"Blue",c:"#4a6a9b"}],
-      sims:["SIM + eSIM","eSIM"], tradeBase:22000, buyPrice:34999, usedPrice:27000 },
-
-    { name:"iPhone 15", year:2023, storages:["128 GB","256 GB","512 GB"],
-      colors:[{n:"Black",c:"#1a1a1a"},{n:"Green",c:"#4a7c5a"},{n:"Yellow",c:"#d4b84a"},{n:"Pink",c:"#f4a9c0"},{n:"Blue",c:"#4a6a9b"}],
-      sims:["SIM + eSIM","eSIM"], tradeBase:20000, buyPrice:32999, usedPrice:24000 },
-
-    // ── iPhone 14 серія (2022) ─────────────────────────────────
-    { name:"iPhone 14 Pro", year:2022, storages:["128 GB","256 GB","512 GB","1 TB"],
-      colors:[{n:"Space Black",c:"#2a2a2c"},{n:"Silver",c:"#d4d4d8"},{n:"Gold",c:"#d4a96a"},{n:"Deep Purple",c:"#4a3a6a"}],
-      sims:["SIM + eSIM"], tradeBase:22000, buyPrice:28999, usedPrice:22000 },
-
-    { name:"iPhone 14", year:2022, storages:["128 GB","256 GB","512 GB"],
-      colors:[{n:"Midnight",c:"#1a1a2e"},{n:"Starlight",c:"#e8e0d5"},{n:"Blue",c:"#3a5a8a"},{n:"Purple",c:"#7a6a9a"},{n:"Red",c:"#b03030"}],
-      sims:["SIM + eSIM"], tradeBase:16000, buyPrice:24999, usedPrice:18000 },
-
-    // ── iPhone 13 серія (2021) ─────────────────────────────────
-    { name:"iPhone 13 Pro", year:2021, storages:["128 GB","256 GB","512 GB","1 TB"],
-      colors:[{n:"Sierra Blue",c:"#7a9ab5"},{n:"Silver",c:"#d4d4d8"},{n:"Gold",c:"#d4a96a"},{n:"Graphite",c:"#5a5a5e"},{n:"Alpine Green",c:"#5a7a6a"}],
-      sims:["SIM + eSIM"], tradeBase:17000, buyPrice:null, usedPrice:20000 },
-
-    { name:"iPhone 13", year:2021, storages:["128 GB","256 GB","512 GB"],
-      colors:[{n:"Midnight",c:"#1a1a2e"},{n:"Starlight",c:"#e8e0d5"},{n:"Blue",c:"#3a5a8a"},{n:"Pink",c:"#f4a9c0"},{n:"Green",c:"#4a7c5a"},{n:"Red",c:"#b03030"}],
-      sims:["SIM + eSIM"], tradeBase:14000, buyPrice:null, usedPrice:16500 },
-
-    // ── iPhone 12 серія (2020) ─────────────────────────────────
-    { name:"iPhone 12 Pro", year:2020, storages:["128 GB","256 GB","512 GB"],
-      colors:[{n:"Pacific Blue",c:"#3a6a8a"},{n:"Silver",c:"#d4d4d8"},{n:"Gold",c:"#d4a96a"},{n:"Graphite",c:"#5a5a5e"}],
-      sims:["SIM + eSIM"], tradeBase:12000, buyPrice:null, usedPrice:14000 },
-
-    { name:"iPhone 12", year:2020, storages:["64 GB","128 GB","256 GB"],
-      colors:[{n:"Black",c:"#1a1a1a"},{n:"White",c:"#e8e8e8"},{n:"Red",c:"#b03030"},{n:"Green",c:"#4a7c5a"},{n:"Blue",c:"#3a5a8a"},{n:"Purple",c:"#7a6a9a"}],
-      sims:["SIM + eSIM"], tradeBase:10000, buyPrice:null, usedPrice:12000 },
-
-    // ── Старші ────────────────────────────────────────────────
-    { name:"iPhone 11", year:2019, storages:["64 GB","128 GB","256 GB"],
-      colors:[{n:"Purple",c:"#7a6a9a"},{n:"White",c:"#e8e8e8"},{n:"Black",c:"#1a1a1a"},{n:"Green",c:"#4a7c5a"},{n:"Yellow",c:"#d4b84a"},{n:"Red",c:"#b03030"}],
-      sims:["SIM + eSIM"], tradeBase:8000, buyPrice:null, usedPrice:10000 },
-
-    { name:"iPhone SE 2022", year:2022, storages:["64 GB","128 GB","256 GB"],
-      colors:[{n:"Midnight",c:"#1a1a2e"},{n:"Starlight",c:"#e8e0d5"},{n:"Red",c:"#b03030"}],
-      sims:["SIM + eSIM"], tradeBase:6500, buyPrice:null, usedPrice:8000 },
-  ];
+  var MODELS = buildTradeInModels();
 
   var nf  = new Intl.NumberFormat('uk-UA');
   var fmt = function(v){ return nf.format(Math.round(v)) + ' ₴'; };
@@ -583,22 +497,6 @@
     get:  { model:null, condition:'all', cond:null, storage:null, color:null, sim:null }
   };
 
-  // -----------------------------------------------------------
-  // Ціна нового iPhone залежно від обраного об'єму пам'яті
-  // -----------------------------------------------------------
-  // Умовна "вартість" кожного об'єму — різниця між обраним і
-  // базовим об'ємом моделі й дає надбавку до ціни.
-  var STORAGE_STEP = {
-    '64 GB': 0, '128 GB': 1500, '256 GB': 5000,
-    '512 GB': 9000, '1 TB': 14000, '2 TB': 20000
-  };
-
-  function storageDelta(model, storage) {
-    var base   = STORAGE_STEP[model.storages[0]] || 0;
-    var chosen = STORAGE_STEP[storage] || 0;
-    return chosen - base;
-  }
-
   // Які стани доступні для конкретної моделі.
   // "Новий" — лише якщо є buyPrice, "Б/У" — лише якщо є usedPrice.
   function availableConds(model) {
@@ -616,23 +514,12 @@
     return conds[0];
   }
 
+  // Ціна моделі в обраній конфігурації — тонка обгортка над спільною
+  // getCatalogPrice() з catalog-data.js (те саме джерело, що й каталог).
   function getBuyPrice(model, storage, cond) {
     if (!model) return 0;
-    storage = storage || model.storages[0];
-
-    // Для нових моделей беремо точну ціну з каталогу (PRICE_TABLE у script.js),
-    // щоб Trade-In і каталог показували однакові цифри.
-    if (cond !== 'used' && typeof PRICE_TABLE !== 'undefined') {
-      var table = PRICE_TABLE[model.name];
-      if (table && table[storage]) return table[storage];
-    }
-
-    var base;
-    if      (cond === 'used' && model.usedPrice) base = model.usedPrice;
-    else if (model.buyPrice)                     base = model.buyPrice;
-    else                                         base = model.usedPrice || Math.round(model.tradeBase * 1.25);
-
-    return Math.max(0, base + storageDelta(model, storage));
+    var price = getCatalogPrice(model.name, storage || model.storages[0], cond);
+    return price !== null ? price : Math.round(model.tradeBase * 1.25);
   }
 
   // ── Крок 1: Сітка моделей що здаємо ──

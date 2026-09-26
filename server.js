@@ -17,8 +17,81 @@ try {
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Rate-limiting нижче рахує запити по req.ip. Якщо сайт стоїть за
+// реверс-проксі/балансувальником (nginx, Render, Railway тощо),
+// без цього рядка всі відвідувачі бачитимуться сервером як одна й та
+// сама IP (проксі), і ліміт спрацює на всіх одразу від дій одного
+// зловмисника. Розкоментуй, якщо деплоїш за проксі:
+// app.set('trust proxy', 1);
+
 app.use(express.json());
 app.use(express.static('public'));
+
+// -------------------------------------------------------------
+// Rate limiting — захист від спаму запитів з однієї IP.
+// Просте рішення на Map в пам'яті процесу: для одного невеликого
+// магазину на одному сервері цього достатньо і не додає залежностей.
+// Якщо колись буде кілька інстансів сервера за балансувальником —
+// варто перенести це на Redis, але для одного процесу воно й не потрібне.
+// -------------------------------------------------------------
+function createHitCounter({ windowMs, max }) {
+    const hits = new Map(); // ключ (IP) -> масив таймстемпів спроб
+
+    // Періодично прибираємо застарілі записи, щоб Map не росла вічно
+    const cleanupTimer = setInterval(() => {
+        const now = Date.now();
+        for (const [key, timestamps] of hits) {
+            const fresh = timestamps.filter(t => now - t < windowMs);
+            if (fresh.length) hits.set(key, fresh);
+            else hits.delete(key);
+        }
+    }, windowMs);
+    cleanupTimer.unref(); // не тримає процес живим заради самого таймера
+
+    return {
+        // Скільки секунд лишилось до розблокування (0, якщо ще не заблоковано)
+        isLimited(key) {
+            const now = Date.now();
+            const timestamps = (hits.get(key) || []).filter(t => now - t < windowMs);
+            hits.set(key, timestamps);
+            return timestamps.length >= max;
+        },
+        // Зафіксувати спробу (виклик рахується в ліміт)
+        hit(key) {
+            const now = Date.now();
+            const timestamps = (hits.get(key) || []).filter(t => now - t < windowMs);
+            timestamps.push(now);
+            hits.set(key, timestamps);
+        },
+        retryAfterSeconds(key) {
+            const timestamps = hits.get(key) || [];
+            if (!timestamps.length) return 0;
+            return Math.max(0, Math.ceil((timestamps[0] + windowMs - Date.now()) / 1000));
+        },
+    };
+}
+
+// Ліміт на відправку форм (замовлення + Trade-In): 10 спроб / 10 хв з однієї IP.
+// Рахуємо кожну спробу (навіть невалідну), щоб і флуд сміттям теж гасився.
+const formSubmitLimiter = createHitCounter({ windowMs: 10 * 60 * 1000, max: 10 });
+
+function rateLimitForms(req, res, next) {
+    const key = req.ip;
+    if (formSubmitLimiter.isLimited(key)) {
+        res.set('Retry-After', String(formSubmitLimiter.retryAfterSeconds(key)));
+        return res.status(429).json({
+            success: false,
+            message: 'Забагато запитів. Спробуйте ще раз через кілька хвилин.',
+        });
+    }
+    formSubmitLimiter.hit(key);
+    next();
+}
+
+// Ліміт на НЕВДАЛІ спроби входу в адмінку: 10 спроб / 15 хв з однієї IP.
+// Рахуємо тільки провалені спроби, тому звичайне користування адмінкою
+// (яка сама опитує сервер раз на 30 сек) ніколи не впирається в ліміт.
+const adminAuthLimiter = createHitCounter({ windowMs: 15 * 60 * 1000, max: 10 });
 
 // Ініціалізація бази даних (файл shop.db створиться сам)
 const db = new sqlite3.Database('./shop.db', (err) => {
@@ -166,7 +239,7 @@ function validateFields(body, schema) {
 // -------------------------------------------------------------
 // Ендпоінт для збереження покупок з каталогу
 // -------------------------------------------------------------
-app.post('/api/order', (req, res) => {
+app.post('/api/order', rateLimitForms, (req, res) => {
     const { name, phone, model, price } = req.body || {};
 
     const invalidFields = validateFields(req.body || {}, {
@@ -212,7 +285,7 @@ app.post('/api/order', (req, res) => {
 // -------------------------------------------------------------
 // Ендпоінт для збереження заявок Trade-In
 // -------------------------------------------------------------
-app.post('/api/trade-in', (req, res) => {
+app.post('/api/trade-in', rateLimitForms, (req, res) => {
     const { name, phone, giveModel, getModel, topup } = req.body || {};
 
     const invalidFields = validateFields(req.body || {}, {
@@ -262,6 +335,16 @@ app.post('/api/trade-in', (req, res) => {
 // АДМІНКА — захист логіном/паролем (HTTP Basic Auth)
 // -------------------------------------------------------------
 function requireAdminAuth(req, res, next) {
+    const ip = req.ip;
+
+    if (adminAuthLimiter.isLimited(ip)) {
+        res.set('Retry-After', String(adminAuthLimiter.retryAfterSeconds(ip)));
+        return res.status(429).json({
+            success: false,
+            message: 'Забагато невдалих спроб входу. Спробуйте через 15 хвилин.',
+        });
+    }
+
     const header = req.headers.authorization || '';
     const [scheme, encoded] = header.split(' ');
 
@@ -275,6 +358,9 @@ function requireAdminAuth(req, res, next) {
             return next();
         }
     }
+
+    // Рахуємо в ліміт тільки невдалу спробу — правильний логін ніколи сюди не доходить
+    adminAuthLimiter.hit(ip);
 
     res.set('WWW-Authenticate', 'Basic realm="AppleX Admin"');
     res.status(401).send('Потрібна авторизація для доступу до адмінки.');
