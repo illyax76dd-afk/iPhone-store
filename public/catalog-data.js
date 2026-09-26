@@ -420,37 +420,44 @@ const COLOR_MAP = {
   'Black Titanium': '#3a3a3c', 'Natural Titanium': '#b8a898',
   'White': '#f5f5f7', 'White Titanium': '#ece9e4', 'Starlight': '#d4d0c8',
   'Cloud White': '#f0ede8',
+  'Star White': '#F5F5F7',
 
   // Silver / Gold
-  'Silver': '#c4c4ce',           // iPhone 17 Pro — алюмінієве срібло
+  'Silver': '#c4c4ce',
   'Desert Titanium': '#c8956c',
-  'Light Gold': '#c9a87c',       // iPhone 17 Air
+  'Light Gold': '#c9a87c',
   'Gold': '#c9a84c', 'Graphite': '#4a4a4a',
 
   // Blues
-  'Deep Blue': '#0d2d52',        // iPhone 17 Pro — дуже темно-синій
+  'Deep Blue': '#0d2d52',
   'Blue': '#3b82f6', 'Ultramarine': '#4a5bab', 'Pacific Blue': '#0ea5e9',
   'Sierra Blue': '#7eb8d4', 'Sky Blue': '#7ab8d4', 'Blue Titanium': '#5b8db8',
-  'Mist Blue': '#7faec2',        // iPhone 17
+  'Mist Blue': '#7faec2',
+  'Night Sky': '#2A2A35',
+  'Glacier Blue': '#A9C2D0',
 
   // Reds / Pinks
   'Pink': '#f4a9c0', 'Product Red': '#d32f2f', 'Red': '#ef4444',
-  'Soft Pink': '#eaacac',        // iPhone 17e
+  'Soft Pink': '#eaacac',
 
   // Purples
-  'Lavender': '#b8a9c9',         // iPhone 17
+  'Lavender': '#b8a9c9',
   'Purple': '#a855f7', 'Deep Purple': '#6d28a7',
+  'Burgundy': '#4A0E17',
 
   // Greens / Teals
-  'Sage': '#7a9a7a',             // iPhone 17
+  'Sage': '#7a9a7a',
   'Green': '#22c55e', 'Teal': '#14b8a6',
 
   // Oranges / Yellows
-  'Cosmic Orange': '#d4682a',    // iPhone 17 Pro / Pro Max — насичений оранж
+  'Cosmic Orange': '#d4682a',
   'Yellow': '#eab308',
 };
 
 const MODEL_COLORS = {
+  // ── iPhone Duo (2026)
+  'iPhone Duo': ['Night Sky', 'Star White'],
+
   // ── iPhone 18 серія (2026)
   'iPhone 18 Pro Max': ['Burgundy', 'Glacier Blue', 'Black', 'Silver'],
   'iPhone 18 Pro':     ['Burgundy', 'Glacier Blue', 'Black', 'Silver'],
@@ -500,6 +507,7 @@ const MODEL_COLORS = {
 
 // All available storage options per model
 const MODEL_STORAGES = {
+  'iPhone Duo': ['256 GB', '512 GB', '1 TB', '2 TB'],
   'iPhone 18 Pro Max': ['256 GB', '512 GB', '1 TB', '2 TB'],
   'iPhone 18 Pro': ['256 GB', '512 GB', '1 TB', '2 TB'],
   'iPhone 17 Pro Max': ['256 GB', '512 GB', '1 TB', '2 TB'],
@@ -528,7 +536,12 @@ const MODEL_STORAGES = {
 // Точні ціни (ринок України, травень 2026, ₴)
 // Використовується в модалці при зміні пам'яті або SIM
 const PRICE_TABLE = {
-
+  'iPhone Duo': {
+    '256 GB': 84999,
+    '512 GB': 97999,
+    '1 TB':   123999,
+    '2 TB':   164999,
+  },
   'iPhone 18 Pro Max': {
     '256 GB': 84999,
     '512 GB': 97999,
@@ -652,9 +665,10 @@ const PRICE_TABLE = {
   },
 };
 const MODEL_DESCRIPTIONS = {
-  'iPhone 18 Pro Max': 'Флагман 2026 року з новим чипом A20 Pro, передовою камерою 48 Мп (зі змінною діафрагмою) і екраном 6.9" ProMotion 120 Гц. Титановий корпус, підекранний Face ID. До 41 год відео без підзарядки.',
+  'iPhone Duo': 'Перший складаний смартфон від Apple 2026 року з новим чипом A20 Pro, системою подвійної камери 48 Мп Dual Fusion та основним внутрішнім екраном 7.6" ProMotion 120 Гц. Тонкий гнучкий дизайн, додатковий зовнішній дисплей 5.4". До 31 год відео на внутрішньому або до 44 год на зовнішньому екрані.',
+  'iPhone 18 Pro Max': 'Флагман 2026 року з новим чипом A20 Pro, передовою камерою 48 Мп (зі змінною діафрагмою) і екраном 6.9" ProMotion 120 Гц. Алюмінієвий корпус, підекранний Face ID. До 41 год відео без підзарядки.',
   'iPhone 18 Pro': 'A20 Pro, потрійна камера 48 Мп зі змінною діафрагмою, екран 6.3" ProMotion. Преміум у компактному форматі з ультратонкими рамками та системою підекранного Face ID.',
-  'iPhone 17 Pro Max': 'Флагман 2025 року з чипом A19 Pro, камерою 48 Мп і екраном 6.9" ProMotion 120 Гц. Титановий корпус. До 39 год відео без підзарядки.',
+  'iPhone 17 Pro Max': 'Флагман 2025 року з чипом A19 Pro, камерою 48 Мп і екраном 6.9" ProMotion 120 Гц. Алюмінієвий корпус. До 39 год відео без підзарядки.',
   'iPhone 17 Pro': 'A19 Pro, потрійна камера 48 Мп, екран 6.3" ProMotion. Преміум у компактному форматі з ультратонкими рамками.',
   'iPhone 17 Air': 'Найтонший iPhone в історії — 5.5 мм. Чип A19, великий 6.6" дисплей, eSIM. Ідеально для тих, хто цінує легкість.',
   'iPhone 17': 'A19, Dynamic Island, камера 48 Мп. Найдоступніший спосіб отримати флагманські технології 2025 року.',
@@ -680,10 +694,11 @@ const MODEL_DESCRIPTIONS = {
 // Specs per model
 const MODEL_SPECS = {
  
-  'iPhone 18 Pro Max': [['Чип', 'A20 Pro'], ['Дисплей', '6.9" OLED ProMotion 120 Гц'], ['Камера', '48 Мп + 48 Мп + 12 Мп'], ['Фронтальна', '24 Мп TrueDepth'], ['Батарея', 'До 41 год відео'], ['Корпус', 'Титан Grade 5'], ['Захист', 'IP68'], ['SIM', 'eSIM'], ['OS', 'iOS 26']],
-  'iPhone 18 Pro': [['Чип', 'A20 Pro'], ['Дисплей', '6.3" OLED ProMotion 120 Гц'], ['Камера', '48 Мп + 48 Мп + 12 Мп'], ['Батарея', 'До 33 год відео'], ['Корпус', 'Титан'], ['Захист', 'IP68'], ['SIM', 'eSIM'], ['OS', 'iOS 26']],
-  'iPhone 17 Pro Max': [['Чип', 'A19 Pro'], ['Дисплей', '6.9" OLED ProMotion 120 Гц'], ['Камера', '48 Мп + 48 Мп + 12 Мп'], ['Фронтальна', '24 Мп TrueDepth'], ['Батарея', 'До 39 год відео'], ['Корпус', 'Титан Grade 5'], ['Захист', 'IP68'], ['SIM', 'eSIM'], ['OS', 'iOS 26']],
-  'iPhone 17 Pro': [['Чип', 'A19 Pro'], ['Дисплей', '6.3" OLED ProMotion 120 Гц'], ['Камера', '48 Мп + 48 Мп + 12 Мп'], ['Батарея', 'До 33 год відео'], ['Корпус', 'Титан'], ['Захист', 'IP68'], ['SIM', 'eSIM'], ['OS', 'iOS 26']],
+  'iPhone Duo': [['Чип', 'A20 Pro'], ['Дисплей', 'Внутрішній гнучкий 7.6" OLED ProMotion 120 Гц + Зовнішній 5.4" OLED'], ['Камера', '48 Мп + 48 Мп Dual Fusion'], ['Фронтальна', '24 Мп під екранна TrueDepth'], ['Батарея', 'До 31 год відео (внутрішній) / До 44 год (зовнішній)'], ['Корпус', 'Тонкий гнучкий дизайн, підсилений шарнір'], ['Захист', 'IPX8'], ['SIM', 'eSIM'], ['OS', 'iOS 27 FoldOS']],
+  'iPhone 18 Pro Max': [['Чип', 'A20 Pro'], ['Дисплей', '6.9" OLED ProMotion 120 Гц'], ['Камера', '48 Мп + 48 Мп + 48 Мп'], ['Фронтальна', '24 Мп TrueDepth'], ['Батарея', 'До 41 год відео'], ['Корпус', 'Алюміній'], ['Захист', 'IP68'], ['SIM', 'eSIM'], ['OS', 'iOS 27']],
+  'iPhone 18 Pro': [['Чип', 'A20 Pro'], ['Дисплей', '6.3" OLED ProMotion 120 Гц'], ['Камера', '48 Мп + 48 Мп + 48 Мп'], ['Батарея', 'До 33 год відео'], ['Корпус', 'Алюміній'], ['Захист', 'IP68'], ['SIM', 'eSIM'], ['OS', 'iOS 27']],
+  'iPhone 17 Pro Max': [['Чип', 'A19 Pro'], ['Дисплей', '6.9" OLED ProMotion 120 Гц'], ['Камера', '48 Мп + 48 Мп + 12 Мп'], ['Фронтальна', '24 Мп TrueDepth'], ['Батарея', 'До 39 год відео'], ['Корпус', 'Алюміній'], ['Захист', 'IP68'], ['SIM', 'eSIM'], ['OS', 'iOS 26']],
+  'iPhone 17 Pro': [['Чип', 'A19 Pro'], ['Дисплей', '6.3" OLED ProMotion 120 Гц'], ['Камера', '48 Мп + 48 Мп + 12 Мп'], ['Батарея', 'До 33 год відео'], ['Корпус', 'Алюміній'], ['Захист', 'IP68'], ['SIM', 'eSIM'], ['OS', 'iOS 26']],
   'iPhone 17 Air': [['Чип', 'A19'], ['Дисплей', '6.6" OLED 60 Гц'], ['Камера', '48 Мп основна'], ['Товщина', '5.5 мм'], ['Батарея', 'До 26 год відео'], ['Захист', 'IP68'], ['SIM', 'eSIM'], ['OS', 'iOS 26']],
   'iPhone 17': [['Чип', 'A19'], ['Дисплей', '6.1" OLED 60 Гц'], ['Камера', '48 Мп основна'], ['Батарея', 'До 22 год відео'], ['Захист', 'IP68'], ['SIM', 'eSIM'], ['OS', 'iOS 26']],
   'iPhone 17e': [['Чип', 'A19'], ['Дисплей', '6.1" OLED 60 Гц'], ['Камера', '48 Мп основна'], ['Батарея', 'До 20 год відео'], ['Захист', 'IP68'], ['SIM', 'eSIM'], ['OS', 'iOS 26']],
