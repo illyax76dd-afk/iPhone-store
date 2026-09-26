@@ -56,7 +56,42 @@ const MODEL_IMAGES = {
 // condition: "Новий" або "Вживаний (Б/У)"
 // -------------------------------------------------------------
 const PRODUCTS = [
-  // ── iPhone 17 серія (2025) ──────────────────────────────────
+  // ── iPhone Duo серія (2026) ──────────────────────────────────
+    {
+    id: 36,
+    model: "iPhone Duo",
+    storage: "2 TB",
+    color: "Night Sky",
+    price: 187999,
+    condition: "Новий",
+    year: 2026,
+    sim: "eSIM",
+    accent: "#c4c4ce"
+  },
+    // ── iPhone 18 серія (2026) ──────────────────────────────────
+  {
+    id: 36,
+    model: "iPhone 18 Pro Max",
+    storage: "1 TB",
+    color: "Burgundy",
+    price: 123999,
+    condition: "Новий",
+    year: 2026,
+    sim: "eSIM",
+    accent: "#c4c4ce"
+  },
+  {
+    id: 37,
+    model: "iPhone 18 Pro",
+    storage: "1 TB",
+    color: "Burgundy",
+    price: 117999,
+    condition: "Новий",
+    year: 2026,
+    sim: "eSIM",
+    accent: "#c4c4ce"
+  },
+   // ── iPhone 17 серія (2025) ──────────────────────────────────
   {
     id: 17,
     model: "iPhone 17 Pro Max",
@@ -359,6 +394,8 @@ const PRODUCTS = [
 
 // Порядок сортування моделей у каталозі (від новіших до старших)
 const modelOrder = [
+  "iPhone Duo",
+  "iphone 18 Pro Max", "iphone 18 Pro",
   "iPhone 17 Pro Max", "iPhone 17 Pro", "iPhone 17 Air", "iPhone 17", "iPhone 17e",
   "iPhone 16 Pro Max", "iPhone 16 Pro", "iPhone 16 Plus", "iPhone 16",
   "iPhone 15 Pro Max", "iPhone 15 Pro", "iPhone 15 Plus", "iPhone 15",
