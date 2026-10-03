@@ -2,6 +2,8 @@ const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const https = require('https');
+const crypto = require('crypto');
+const fs = require('fs');
 
 // -------------------------------------------------------------
 // Конфігурація (токен бота, chat_id, логін/пароль адмінки)
@@ -24,7 +26,8 @@ const PORT = process.env.PORT || 3000;
 // зловмисника. Розкоментуй, якщо деплоїш за проксі:
 // app.set('trust proxy', 1);
 
-app.use(express.json());
+app.disable('x-powered-by');
+app.use(express.json({ limit: '10kb' })); // публічним формам не потрібні великі тіла
 app.use(express.static('public'));
 
 // -------------------------------------------------------------
@@ -332,9 +335,63 @@ app.post('/api/trade-in', rateLimitForms, (req, res) => {
 });
 
 // -------------------------------------------------------------
-// АДМІНКА — захист логіном/паролем (HTTP Basic Auth)
+// АДМІНКА — захист
+//
+// Шари захисту (від зовнішнього до внутрішнього):
+//  1. Логін/пароль (HTTP Basic Auth) + ліміт невдалих спроб,
+//     порівняння у постійний час (без витоку через таймінг).
+//  2. Захист від CSRF: Basic Auth браузер прикріплює автоматично,
+//     тому шкідливий сайт міг би «від імені адміна» очистити базу.
+//     Тепер кожен POST мусить мати той самий origin І секретний
+//     токен, який отримує лише сторінка адмінки.
+//  3. Content-Security-Policy зі скриптами тільки за nonce: навіть
+//     якщо в таблицю якось потрапить чужий HTML, браузер його
+//     не виконає. Плюс дані екрануються на виході (admin.html).
+//  4. Заголовки: no-store, заборона iframe, nosniff тощо.
 // -------------------------------------------------------------
+
+// Порівняння рядків у постійний час (через хеші однакової довжини)
+function safeEqual(a, b) {
+    const ha = crypto.createHash('sha256').update(String(a)).digest();
+    const hb = crypto.createHash('sha256').update(String(b)).digest();
+    return crypto.timingSafeEqual(ha, hb);
+}
+
+// Заглушки з config.example.js не вважаємо паролем
+const PLACEHOLDER_PASSWORDS = ['', 'change_me', 'change_me_now', 'PASTE_YOUR_PASSWORD_HERE', 'admin', 'password', '12345678'];
+const adminConfigured =
+    typeof config.ADMIN_USERNAME === 'string' && config.ADMIN_USERNAME.length > 0 &&
+    typeof config.ADMIN_PASSWORD === 'string' &&
+    !PLACEHOLDER_PASSWORDS.includes(config.ADMIN_PASSWORD);
+
+if (!adminConfigured) {
+    console.warn('⚠ Адмінку ВИМКНЕНО: у config.js не задано власний ADMIN_PASSWORD (або лишилась заглушка).');
+} else if (config.ADMIN_PASSWORD.length < 10) {
+    console.warn('⚠ ADMIN_PASSWORD коротший за 10 символів — краще довша фраза.');
+}
+
+// Секретний токен проти CSRF: новий на кожен запуск сервера.
+// Віддається ТІЛЬКИ в HTML сторінки /admin (після логіну); чужий
+// сайт прочитати цю відповідь не може (same-origin policy).
+const CSRF_TOKEN = crypto.randomBytes(32).toString('hex');
+
+function adminSecurityHeaders(req, res, next) {
+    res.set({
+        'Cache-Control': 'no-store',
+        'Pragma': 'no-cache',
+        'X-Frame-Options': 'DENY',
+        'X-Content-Type-Options': 'nosniff',
+        'Referrer-Policy': 'no-referrer',
+        'Cross-Origin-Resource-Policy': 'same-origin',
+    });
+    next();
+}
+
 function requireAdminAuth(req, res, next) {
+    if (!adminConfigured) {
+        return res.status(503).send('Адмінку вимкнено: задай власний ADMIN_PASSWORD у config.js і перезапусти сервер.');
+    }
+
     const ip = req.ip;
 
     if (adminAuthLimiter.isLimited(ip)) {
@@ -351,11 +408,10 @@ function requireAdminAuth(req, res, next) {
     if (scheme === 'Basic' && encoded) {
         const decoded = Buffer.from(encoded, 'base64').toString('utf-8');
         const sepIndex = decoded.indexOf(':');
-        const user = decoded.slice(0, sepIndex);
-        const pass = decoded.slice(sepIndex + 1);
-
-        if (user === config.ADMIN_USERNAME && pass === config.ADMIN_PASSWORD) {
-            return next();
+        if (sepIndex >= 0) {
+            const userOk = safeEqual(decoded.slice(0, sepIndex), config.ADMIN_USERNAME);
+            const passOk = safeEqual(decoded.slice(sepIndex + 1), config.ADMIN_PASSWORD);
+            if (userOk && passOk) return next();
         }
     }
 
@@ -366,89 +422,103 @@ function requireAdminAuth(req, res, next) {
     res.status(401).send('Потрібна авторизація для доступу до адмінки.');
 }
 
-// Захищаємо всі маршрути адмінки одним middleware
-app.use('/admin', requireAdminAuth);
-app.use('/api/admin', requireAdminAuth);
+// CSRF: всі «змінюючі» запити до адмінки
+function csrfProtect(req, res, next) {
+    if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) return next();
 
-// Сама сторінка адмінки (public-html/admin.html, окремо від публічного каталогу)
+    const reject = (why) => {
+        console.warn(`[CSRF] відхилено (${why}): ${req.method} ${req.originalUrl}`);
+        return res.status(403).json({
+            success: false,
+            message: 'Запит відхилено (захист CSRF). Оновіть сторінку адмінки та спробуйте ще раз.',
+        });
+    };
+
+    // 1) Сучасні браузери самі повідомляють, звідки прийшов запит
+    const site = req.get('sec-fetch-site');
+    if (site && site !== 'same-origin' && site !== 'none') return reject(`sec-fetch-site=${site}`);
+
+    // 2) Origin має збігатися з нашим хостом (порівнюємо тільки host,
+    //    щоб не ламатись за HTTPS-проксі, де схема всередині інша)
+    const origin = req.get('origin');
+    if (origin) {
+        let originHost;
+        try { originHost = new URL(origin).host; } catch { return reject('некоректний Origin'); }
+        if (originHost !== req.get('host')) return reject(`Origin=${origin}`);
+    }
+
+    // 3) Секретний токен зі сторінки адмінки
+    if (!safeEqual(req.get('x-csrf-token') || '', CSRF_TOKEN)) return reject('невірний токен');
+
+    next();
+}
+
+// Захищаємо всі маршрути адмінки (порядок важливий: спершу логін)
+app.use(['/admin', '/api/admin'], adminSecurityHeaders, requireAdminAuth);
+app.use('/api/admin', csrfProtect);
+
+// Сторінка адмінки: підставляємо nonce для CSP і токен CSRF
 app.get('/admin', (req, res) => {
-    res.sendFile(path.join(__dirname, 'admin', 'admin.html'));
+    fs.readFile(path.join(__dirname, 'admin', 'admin.html'), 'utf8', (err, html) => {
+        if (err) return res.status(500).send('Не вдалося завантажити адмінку.');
+        const nonce = crypto.randomBytes(16).toString('base64');
+        res.set({
+            'Content-Type': 'text/html; charset=utf-8',
+            'Content-Security-Policy': [
+                "default-src 'none'",
+                `script-src 'nonce-${nonce}'`,
+                `style-src 'nonce-${nonce}'`,
+                "connect-src 'self'",
+                "img-src 'self' data:",
+                "base-uri 'none'",
+                "form-action 'none'",
+                "frame-ancestors 'none'",
+            ].join('; '),
+        });
+        res.send(html.split('__CSP_NONCE__').join(nonce).split('__CSRF_TOKEN__').join(CSRF_TOKEN));
+    });
 });
 
-// Список замовлень
-app.get('/api/admin/orders', (req, res) => {
-    db.all(`SELECT * FROM orders ORDER BY created_at DESC`, [], (err, rows) => {
+// Допустимі таблиці для спільних ендпоінтів (білий список — у SQL
+// підставляється ТІЛЬКИ значення звідси, ніколи рядок із запиту)
+const ADMIN_TABLES = { orders: 'orders', tradeins: 'tradeins' };
+
+function resolveTable(req, res, next) {
+    const table = ADMIN_TABLES[req.params.kind];
+    if (!table) return res.status(404).json({ success: false, message: 'Не знайдено' });
+    req.table = table;
+    next();
+}
+
+// Список замовлень / заявок Trade-In
+app.get('/api/admin/:kind', resolveTable, (req, res) => {
+    db.all(`SELECT * FROM ${req.table} ORDER BY created_at DESC, id DESC`, [], (err, rows) => {
         if (err) return res.status(500).json({ success: false, message: 'Помилка БД' });
         res.json({ success: true, data: rows });
     });
 });
 
-// Список заявок Trade-In
-app.get('/api/admin/tradeins', (req, res) => {
-    db.all(`SELECT * FROM tradeins ORDER BY created_at DESC`, [], (err, rows) => {
+// Перемкнути статус «оброблено»
+app.post('/api/admin/:kind/:id/toggle', resolveTable, (req, res) => {
+    if (!/^\d{1,12}$/.test(req.params.id)) {
+        return res.status(400).json({ success: false, message: 'Некоректний id' });
+    }
+    const id = Number(req.params.id);
+    db.run(`UPDATE ${req.table} SET processed = CASE WHEN processed = 1 THEN 0 ELSE 1 END WHERE id = ?`, [id], function (err) {
         if (err) return res.status(500).json({ success: false, message: 'Помилка БД' });
-        res.json({ success: true, data: rows });
-    });
-});
-
-// Перемкнути статус "оброблено" для замовлення
-app.post('/api/admin/orders/:id/toggle', (req, res) => {
-    const { id } = req.params;
-    db.get(`SELECT processed FROM orders WHERE id = ?`, [id], (err, row) => {
-        if (err || !row) return res.status(404).json({ success: false, message: 'Не знайдено' });
-        const newVal = row.processed ? 0 : 1;
-        db.run(`UPDATE orders SET processed = ? WHERE id = ?`, [newVal, id], (updErr) => {
-            if (updErr) return res.status(500).json({ success: false, message: 'Помилка БД' });
-            res.json({ success: true, processed: newVal });
+        if (this.changes === 0) return res.status(404).json({ success: false, message: 'Не знайдено' });
+        db.get(`SELECT processed FROM ${req.table} WHERE id = ?`, [id], (getErr, row) => {
+            if (getErr || !row) return res.status(500).json({ success: false, message: 'Помилка БД' });
+            res.json({ success: true, processed: row.processed });
         });
     });
 });
 
-// Перемкнути статус "оброблено" для Trade-In заявки
-app.post('/api/admin/tradeins/:id/toggle', (req, res) => {
-    const { id } = req.params;
-    db.get(`SELECT processed FROM tradeins WHERE id = ?`, [id], (err, row) => {
-        if (err || !row) return res.status(404).json({ success: false, message: 'Не знайдено' });
-        const newVal = row.processed ? 0 : 1;
-        db.run(`UPDATE tradeins SET processed = ? WHERE id = ?`, [newVal, id], (updErr) => {
-            if (updErr) return res.status(500).json({ success: false, message: 'Помилка БД' });
-            res.json({ success: true, processed: newVal });
-        });
-    });
-});
-
-// Очистити всі замовлення
-app.post('/api/admin/orders/clear', (req, res) => {
-    db.run(`DELETE FROM orders`, [], (err) => {
+// Очистити всі записи таблиці
+app.post('/api/admin/:kind/clear', resolveTable, (req, res) => {
+    db.run(`DELETE FROM ${req.table}`, [], (err) => {
         if (err) return res.status(500).json({ success: false, message: 'Помилка БД' });
-        console.log('[БД] Усі замовлення видалено через адмінку.');
-        res.json({ success: true });
-    });
-});
-
-// Очистити всі заявки Trade-In
-app.post('/api/admin/tradeins/clear', (req, res) => {
-    db.run(`DELETE FROM tradeins`, [], (err) => {
-        if (err) return res.status(500).json({ success: false, message: 'Помилка БД' });
-        console.log('[БД] Усі заявки Trade-In видалено через адмінку.');
-        res.json({ success: true });
-    });
-});
-
-// Очистити всі замовлення
-app.post('/api/admin/orders/clear', (req, res) => {
-    db.run(`DELETE FROM orders`, (err) => {
-        if (err) return res.status(500).json({ success: false, message: 'Помилка БД' });
-        console.log('[БД] Усі замовлення видалено з адмінки.');
-        res.json({ success: true });
-    });
-});
-
-// Очистити всі заявки Trade-In
-app.post('/api/admin/tradeins/clear', (req, res) => {
-    db.run(`DELETE FROM tradeins`, (err) => {
-        if (err) return res.status(500).json({ success: false, message: 'Помилка БД' });
-        console.log('[БД] Усі заявки Trade-In видалено з адмінки.');
+        console.log(`[БД] Таблицю "${req.table}" очищено через адмінку.`);
         res.json({ success: true });
     });
 });
