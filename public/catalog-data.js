@@ -67,7 +67,7 @@ const PRODUCTS = [
     model: "iPhone Duo",
     storage: "2 TB",
     color: "Night Sky",
-    price: 187999,
+    price: 198999,
     condition: "Новий",
     year: 2026,
     sim: "eSIM",
@@ -533,14 +533,17 @@ const MODEL_STORAGES = {
   'iPhone SE 2022': ['64 GB', '128 GB', '256 GB'],
 };
 
-// Точні ціни (ринок України, травень 2026, ₴)
+// Ціни (ринок України, станом на 3 жовтня 2026, ₴)
 // Використовується в модалці при зміні пам'яті або SIM
 const PRICE_TABLE = {
+  // iPhone Duo: 256 GB (119 999) і 2 TB (198 999) — попередні ціни з
+  // українських медіа; 512 GB і 1 TB — розраховані за тим самим кроком,
+  // що й у 18 Pro Max (офіційних цін ще немає, передзамовлення з жовтня).
   'iPhone Duo': {
-    '256 GB': 84999,
-    '512 GB': 97999,
-    '1 TB':   123999,
-    '2 TB':   164999,
+    '256 GB': 119999,
+    '512 GB': 132999,
+    '1 TB':   158999,
+    '2 TB':   198999,
   },
   'iPhone 18 Pro Max': {
     '256 GB': 84999,
@@ -778,7 +781,11 @@ function getModelConditions(modelName) {
 // Базова оцінка ВИКУПУ старого iPhone (скільки МИ платимо клієнту).
 // Це не ціна продажу з каталогу — окрема бізнес-величина, тому вона
 // не виводиться з PRODUCTS/PRICE_TABLE і задається тут прямо.
+// Значення — для найменшого обсягу пам'яті моделі в стані «Ідеальний»
+// (≈ 70–72% від ціни нового, як і для решти лінійок).
 const TRADE_IN_BUYBACK_BASE = {
+  'iPhone Duo': 80000,
+  'iPhone 18 Pro Max': 57000, 'iPhone 18 Pro': 52000,
   'iPhone 17 Pro Max': 48000, 'iPhone 17 Pro': 42000, 'iPhone 17 Air': 36000, 'iPhone 17': 32000, 'iPhone 17e': 25000,
   'iPhone 16 Pro Max': 36000, 'iPhone 16 Pro': 32000, 'iPhone 16 Plus': 28500, 'iPhone 16': 26000,
   'iPhone 15 Pro Max': 30000, 'iPhone 15 Pro': 26000, 'iPhone 15 Plus': 22000, 'iPhone 15': 20000,
@@ -786,6 +793,18 @@ const TRADE_IN_BUYBACK_BASE = {
   'iPhone 13 Pro': 17000, 'iPhone 13': 14000,
   'iPhone 12 Pro': 12000, 'iPhone 12': 10000,
   'iPhone 11': 8000, 'iPhone SE 2022': 6500,
+};
+
+// Надбавка до викупу за обсяг пам'яті (абсолютна, замість стандартної
+// таблиці в trade-in.html) — для дорогих моделей 2026 року, де різниця
+// в ціні між 256 GB і 2 TB — десятки тисяч гривень (≈ 70% від цієї різниці).
+const TRADE_IN_STORAGE_BONUS_2026 = {
+  '256 GB': 3500, '512 GB': 12500, '1 TB': 30500, '2 TB': 58000
+};
+const TRADE_IN_STORAGE_BONUS = {
+  'iPhone Duo':        TRADE_IN_STORAGE_BONUS_2026,
+  'iPhone 18 Pro Max': TRADE_IN_STORAGE_BONUS_2026,
+  'iPhone 18 Pro':     TRADE_IN_STORAGE_BONUS_2026,
 };
 
 // Будує список моделей у форматі, який очікує wizard trade-in.html
@@ -811,6 +830,7 @@ function buildTradeInModels() {
       year: variants[0].year,
       storages, colors, sims,
       tradeBase: TRADE_IN_BUYBACK_BASE[name] ?? 0,
+      storageBonus: TRADE_IN_STORAGE_BONUS[name] || null,
       buyPrice:  hasNew  ? getCatalogPrice(name, storages[0], 'new')  : null,
       usedPrice: hasUsed ? getCatalogPrice(name, storages[0], 'used') : null,
     };

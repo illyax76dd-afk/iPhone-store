@@ -459,10 +459,16 @@
   function calcTrade(model, storage, condition) {
     if (!model) return 0;
     var b = model.tradeBase;
-    if      (storage === '128 GB') b += 1500;
-    else if (storage === '256 GB') b += 3500;
-    else if (storage === '512 GB') b += 5500;
-    else if (storage === '1 TB')   b += 9000;
+    if (model.storageBonus) {
+      // Моделі 2026 року (Duo, 18 Pro / Pro Max): окрема таблиця надбавок
+      b += model.storageBonus[storage] || 0;
+    } else {
+      if      (storage === '128 GB') b += 1500;
+      else if (storage === '256 GB') b += 3500;
+      else if (storage === '512 GB') b += 5500;
+      else if (storage === '1 TB')   b += 9000;
+      else if (storage === '2 TB')   b += 13000;
+    }
     if      (condition === 'Хороший') b *= 0.88;
     else if (condition === 'Є сліди') b *= 0.75;
     return b;
