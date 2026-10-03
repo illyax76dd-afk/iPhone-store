@@ -1659,3 +1659,8 @@ input:focus-visible {
   .product-card .price { font-size: .98rem; }
   .hero-badges { grid-template-columns: 1fr; }
 }
+
+/* Плавна зміна фото при виборі кольору в модалці */
+.modal-phone-img {
+  transition: opacity .15s ease, transform .4s cubic-bezier(.34,1.56,.64,1) !important;
+}

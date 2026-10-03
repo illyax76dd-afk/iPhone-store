@@ -151,7 +151,7 @@ function buildCatalog() {
 
     // Рендер карток
     grid.innerHTML = filtered.map(p => {
-      const imgUrl = MODEL_IMAGES[p.model];
+      const imgUrl = getModelImage(p.model, p.color);
       const visual = imgUrl
           ? `<div class="product-visual product-visual--photo">
                <img src="${imgUrl}" alt="${p.model}" loading="lazy" onerror="this.parentElement.classList.remove('product-visual--photo');this.remove()">
@@ -358,8 +358,8 @@ function openModal(product) {
 
   // Photo
   const imgEl = document.getElementById('modalImg');
-  const imgUrl = MODEL_IMAGES[product.model];
-  imgEl.src = imgUrl || '';
+  const imgUrl = getModelImage(product.model, product.color);
+  setModalImage(imgEl, product.model, product.color);
   imgEl.alt = product.model;
   document.getElementById('modalPhotoCol').style.background =
       imgUrl ? '#0d0d0f' : `linear-gradient(135deg,${product.accent},rgba(17,24,39,.7))`;
@@ -414,8 +414,30 @@ function closeModal() {
   document.body.style.overflow = '';
 }
 
+// Ставить у модалці фото потрібного кольору. Якщо файл кольору не знайдено
+// (ще не завантажений) — показує загальне фото моделі.
+function setModalImage(imgEl, model, color) {
+  const src = getModelImage(model, color);
+  imgEl.onerror = () => {
+    imgEl.onerror = null;
+    imgEl.src = MODEL_IMAGES[model] || '';
+  };
+  imgEl.src = src;
+}
+
 function updateModalFromState() {
   const baseModel = modalState.product;
+
+  // Міняємо фото під обраний колір (з плавним згасанням)
+  const modalImgEl = document.getElementById('modalImg');
+  const newSrc = getModelImage(baseModel.model, modalState.selectedColor);
+  if (newSrc && !modalImgEl.src.endsWith(newSrc)) {
+    modalImgEl.style.opacity = 0;
+    setTimeout(() => {
+      setModalImage(modalImgEl, baseModel.model, modalState.selectedColor);
+      modalImgEl.style.opacity = 1;
+    }, 150);
+  }
 
   // Шукаємо точну ціну з таблиці: модель → пам'ять
   const modelPrices = PRICE_TABLE[baseModel.model] || {};
