@@ -114,6 +114,46 @@ const MODEL_COLOR_IMAGES = {
     'Natural Titanium':   'img/16-pro-natural.jpg',
     'Desert Titanium':    'img/16-pro-desert.jpg',
   },
+  'iPhone 16 Plus': {
+    'Black':              'img/16-plus-black.jpg',
+    'White':              'img/16-plus-white.jpg',
+    'Pink':               'img/16-plus-pink.jpg',
+    'Teal':               'img/16-plus-teal.jpg',
+    'Ultramarine':        'img/16-plus-ultramarine.jpg',
+  },
+  'iPhone 16': {
+    'Black':              'img/16-black.jpg',
+    'White':              'img/16-white.jpg',
+    'Pink':               'img/16-pink.jpg',
+    'Teal':               'img/16-teal.jpg',
+    'Ultramarine':        'img/16-ultramarine.jpg',
+  },
+  'iPhone 15 Pro Max': {
+    'Black Titanium':     'img/15-pro-max-black.jpg',
+    'White Titanium':     'img/15-pro-max-white.jpg',
+    'Natural Titanium':   'img/15-pro-max-natural.jpg',
+    'Blue Titanium':      'img/15-pro-max-blue.jpg',
+  },
+  'iPhone 15 Pro': {
+    'Black Titanium':     'img/15-pro-black.jpg',
+    'White Titanium':     'img/15-pro-white.jpg',
+    'Natural Titanium':   'img/15-pro-natural.jpg',
+    'Blue Titanium':      'img/15-pro-blue.jpg',
+  },
+  'iPhone 15 Plus': {
+    'Black':              'img/15-plus-black.jpg',
+    'Pink':               'img/15-plus-pink.jpg',
+    'Yellow':             'img/15-plus-yellow.jpg',
+    'Green':              'img/15-plus-green.jpg',
+    'Blue':               'img/15-plus-blue.jpg',
+  },
+  'iPhone 15': {
+    'Black':              'img/15-black.jpg',
+    'Pink':               'img/15-pink.jpg',
+    'Yellow':             'img/15-yellow.jpg',
+    'Green':              'img/15-green.jpg',
+    'Blue':               'img/15-blue.jpg',
+  },
 };
 
 // Фото для моделі й кольору; якщо фото кольору немає — загальне фото моделі
