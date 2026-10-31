@@ -62,12 +62,58 @@ const MODEL_IMAGES = {
 // Для моделей/кольорів, яких тут нема, береться загальне фото з MODEL_IMAGES.
 // -------------------------------------------------------------
 const MODEL_COLOR_IMAGES = {
-  'iPhone 17 Pro Max': {
-    'Cosmic Orange': 'img/17-pro-max-orange.jpg',
-    'Deep Blue':     'img/17-pro-max-blue.jpg',
-    'Silver':        'img/17-pro-max-silver.jpg',
+  'iPhone 18 Pro Max': {
+    'Burgundy':           'img/18-pro-max-burgundy.jpg',
+    'Gracier Blue':       'img/18-pro-max-blue.jpg',
+    'Black':              'img/18-pro-max-black.jpg',
+    'Silver':             'img/18-pro-max-silver.jpg',
   },
-  // Сюди пізніше додаси інші моделі за таким самим шаблоном
+  'iPhone 18 Pro': {
+    'Burgundy':           'img/18-pro-burgundy.jpg',
+    'Gracier Blue':       'img/18-pro-blue.jpg',
+    'Black':              'img/18-pro-black.jpg',
+    'Silver':             'img/18-pro-silver.jpg',
+  },
+  'iPhone 17 Pro Max': {
+    'Cosmic Orange':      'img/17-pro-max-orange.jpg',
+    'Deep Blue':          'img/17-pro-max-blue.jpg',
+    'Silver':             'img/17-pro-max-silver.jpg',
+  },
+  'iPhone 17 Pro': {
+    'Cosmic Orange':      'img/17-pro-orange.jpg',
+    'Deep Blue':          'img/17-pro-blue.jpg',
+    'Silver':             'img/17-pro-silver.jpg',
+  },
+  'iPhone 17 Air': {
+    'Sky Blue':           'img/17-air-blue.jpg',
+    'Light Gold':         'img/17-air-gold.jpg',
+    'Cloud White':        'img/17-air-white.jpg',
+    'Space Black':        'img/17-air-black.jpg',
+  },
+  'iPhone 17': {
+    'Black':              'img/17-black.jpg',
+    'White':              'img/17-white.jpg',
+    'Lavender':           'img/17-lavender.jpg',
+    'Mist Blue':          'img/17-blue.jpg',
+    'Sage':               'img/17-sage.jpg',
+  },
+  'iPhone 17e': {
+    'Black':              'img/17e-black.jpg',
+    'White':              'img/17e-white.jpg',
+    'Soft Pink':          'img/17e-pink.jpg',
+  },
+  'iPhone 16 Pro Max': {
+    'Black Titanium':     'img/16-pro-max-black.jpg',
+    'White Titanium':     'img/16-pro-max-white.jpg',
+    'Natural Titanium':   'img/16-pro-max-natural.jpg',
+    'Desert Titanium':    'img/16-pro-max-desert.jpg',
+  },
+  'iPhone 16 Pro': {
+    'Black Titanium':     'img/16-pro-black.jpg',
+    'White Titanium':     'img/16-pro-white.jpg',
+    'Natural Titanium':   'img/16-pro-natural.jpg',
+    'Desert Titanium':    'img/16-pro-desert.jpg',
+  },
 };
 
 // Фото для моделі й кольору; якщо фото кольору немає — загальне фото моделі
