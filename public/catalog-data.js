@@ -154,6 +154,64 @@ const MODEL_COLOR_IMAGES = {
         'Green': 'img/15-green.jpg',
         'Blue': 'img/15-blue.jpg',
     },
+
+    'iPhone 14 Pro': {
+        'Space Black': 'img/14-pro-black.jpg',
+        'Silver': 'img/14-pro-silver.jpg',
+        'Gold': 'img/14-pro-gold.jpg',
+        'Deep Purple': 'img/14-pro-purple.jpg',
+    },
+    'iPhone 14': {
+        'Midnight': 'img/14-midnight.jpg',
+        'Starlight': 'img/14-starlight.jpg',
+        'Blue': 'img/14-blue.jpg',
+        'Pink': 'img/14-pink.jpg',
+        'Green': 'img/14-green.jpg',
+        'Red': 'img/14-red.jpg',
+    },
+    'iPhone 13 Pro': {
+        'Sierra Blue': 'img/13-pro-blue.jpg',
+        'Silver': 'img/13-pro-silver.jpg',
+        'Gold': 'img/13-pro-gold.jpg',
+        'Graphite': 'img/13-pro-graphite.jpg',
+    },
+    'iPhone 13': {
+        'Midnight': 'img/13-midnight.jpg',
+        'Starlight': 'img/13-starlight.jpg',
+        'Blue': 'img/13-blue.jpg',
+        'Pink': 'img/13-pink.jpg',
+        'Green': 'img/13-green.jpg',
+        'Red': 'img/13-red.jpg',
+    },
+    'iPhone 12 Pro': {
+        'Pacific Blue': 'img/12-pro-pacific.jpg',
+        'Silver': 'img/12-pro-silver.jpg',
+        'Gold': 'img/12-pro-gold.jpg',
+        'Graphite': 'img/12-pro-graphite.jpg',
+    },
+    'iPhone 12': {
+        'Black': 'img/12-black.jpg',
+        'White': 'img/12-white.jpg',
+        'Blue': 'img/12-blue.jpg',
+        'Green': 'img/12-green.jpg',
+        'Red': 'img/12-red.jpg',
+        'Purple': 'img/12-purple.jpg',
+        'Yellow': 'img/12-yellow.jpg',
+    },
+    'iPhone 11': {
+        'Black': 'img/11-black.jpg',
+        'White': 'img/11-white.jpg',
+        'Blue': 'img/11-blue.jpg',
+        'Purple': 'img/11-purple.jpg',
+        'Yellow': 'img/11-yellow.jpg',
+        'Green': 'img/11-green.jpg',
+        'Red': 'img/11-red.jpg',
+    },
+    'iPhone SE 2022': {
+        'Midnight': 'img/se-midnight.jpg',
+        'Starlight': 'img/se-starlight.jpg',
+        'Red': 'img/se-red.jpg',
+    },
 };
 
 // Фото для моделі й кольору; якщо фото кольору немає — загальне фото моделі
