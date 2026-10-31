@@ -1241,7 +1241,7 @@ function buildTradeInModels() {
             storages,
             colors,
             sims,
-            tradeBase: TRADE_IN_BUYBACK_BASE[name] ? ? 0,
+            tradeBase: TRADE_IN_BUYBACK_BASE[name] || 0,
             storageBonus: TRADE_IN_STORAGE_BONUS[name] || null,
             buyPrice: hasNew ? getCatalogPrice(name, storages[0], 'new') : null,
             usedPrice: hasUsed ? getCatalogPrice(name, storages[0], 'used') : null,
